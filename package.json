@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "NODE_PATH=node_modules node src/build_deck.js output/若穂地区_住民説明会資料.pptx",
-    "build:screen": "APPENDIX=0 NODE_PATH=node_modules node src/build_deck.js output/若穂地区_住民説明会資料_投影用.pptx"
+    "build:screen": "APPENDIX=0 NODE_PATH=node_modules node src/build_deck.js output/若穂地区_住民説明会資料_投影用.pptx",
+    "build:sheet": "node src/build_sheet.js output/意見用紙.pptx"
   },
   "dependencies": {
     "pptxgenjs": "^3.12.0",
