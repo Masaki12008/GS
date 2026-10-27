@@ -9,6 +9,7 @@ let applyTheme = null;
 try { ({ applyTheme } = require(process.env.APPLY_THEME || "/mnt/skills/public/pptx/scripts/apply_theme.js")); } catch (e) { /* optional: theme colors only */ }
 
 const OUT = process.argv[2] || "output/若穂地区_住民説明会資料.pptx";
+const APPENDIX = process.env.APPENDIX !== "0"; // APPENDIX=0 で参考資料を除いた投影用を作る
 const FONT = "BIZ UDPゴシック";
 const K = { navy: "1D4636", teal: "2E7D5B", tealL: "E8F2EC", amber: "D9573E", amberL: "FCEBE6", ink: "1E2A26", sub: "56635D", line: "D7DFDA", bg: "F4F7F5", white: "FFFFFF", grey: "9AA59F", hill1: "2A5C47", hill2: "3B7259", hill3: "4E8A6C" };
 const THEME = { name: "Wakaho", headFontFace: FONT, bodyFontFace: FONT, colors: { dk1: K.ink, lt1: K.white, dk2: K.navy, lt2: K.bg, accent1: K.teal, accent2: K.amber, accent3: K.navy, accent4: "6FA8C0", accent5: K.grey, accent6: "B5543A", hlink: K.teal, folHlink: "6B4E9B" } };
@@ -39,7 +40,7 @@ pres.defineSlideMaster({
 const T = (s, text, o) => s.addText(text, Object.assign({ isTextBox: true, margin: 0, fontSize: 16, color: K.ink, valign: "top", fontFace: FONT }, o));
 const box = (s, x, y, w, h, fill, line) => s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: fill }, line: line ? { color: line, width: 1 } : { type: "none" }, rectRadius: 0.12 });
 const sub = (s, text) => T(s, text, { x: 0.6, y: 1.12, w: 12.1, h: 0.4, fontSize: 16, color: K.sub });
-const note = (s, text, y = 6.55) => T(s, text, { x: 0.6, y, w: 12.1, h: 0.3, fontSize: 11, color: K.grey });
+const note = (s, text, y = 6.55) => T(s, text, { x: 0.6, y, w: 12.1, h: 0.3, fontSize: 12, color: K.sub });
 let SEC = "";
 const content = (title, subtitle) => { const s = pres.addSlide({ masterName: "CONTENT" }); if (SEC) T(s, SEC, { x: 0.6, y: 0.2, w: 6, h: 0.3, fontSize: 14, bold: true, color: K.amber }); s.addText(title, { placeholder: "title" }); if (subtitle) sub(s, subtitle); return s; };
 
@@ -119,6 +120,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     }
     box(s, 0.6, 5.9, 12.1, 0.6, K.amberL);
     T(s, "本資料は検討用の案です。再編方式・校地・実施時期が決定したことを示すものではありません。", { x: 0.85, y: 5.9, w: 11.7, h: 0.6, fontSize: 15, bold: true, color: "A3402C", valign: "middle" });
+    note(s, "年は「令和8年度（2026年度）」のように併記しています。専門用語の説明は、巻末の参考資料にあります。", 6.62);
   }
 
   // 3 出発点
@@ -144,11 +146,15 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       { name: "令和8年度（2026）", labels: Object.keys(sch), values: Object.values(sch).map(a => a[0]) },
       { name: "令和14年度（2032）", labels: Object.keys(sch), values: Object.values(sch).map(a => a[6]) },
     ], Object.assign({}, chartBase, {
-      x: 0.5, y: 1.65, w: 7.6, h: 4.8, barDir: "bar", chartColors: [K.grey, K.teal], barGapWidthPct: 60, barOverlapPct: -10,
+      x: 0.5, y: 1.95, w: 7.6, h: 4.5, barDir: "bar", chartColors: [K.grey, K.teal], barGapWidthPct: 60, barOverlapPct: -10,
       catAxisOrientation: "maxMin", valAxisHidden: true, valGridLine: { style: "none" }, valAxisMinVal: 0, valAxisMaxVal: 320,
       showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 14, dataLabelColor: K.ink, dataLabelFormatCode: '0"人"',
-      catAxisLabelFontSize: 18, catAxisLabelColor: K.ink, showLegend: true, legendPos: "t", legendFontSize: 14, legendColor: K.ink,
+      catAxisLabelFontSize: 18, catAxisLabelColor: K.ink, showLegend: false,
     }));
+    [["令和8年度（2026）", K.grey], ["令和14年度（2032）", K.teal]].forEach(([t, c], i) => {
+      s.addShape(pres.shapes.RECTANGLE, { x: 1.9 + i * 3.0, y: 1.62, w: 0.3, h: 0.25, fill: { color: c }, line: { type: "none" } });
+      T(s, t, { x: 2.3 + i * 3.0, y: 1.57, w: 2.6, h: 0.35, fontSize: 16, color: K.ink, valign: "middle" });
+    });
     const rows = Object.entries(sch);
     rows.forEach(([n, a], i) => {
       const y = 1.75 + i * 1.55;
@@ -213,7 +219,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       T(s, `${a.toLocaleString()}人 → ${b.toLocaleString()}人`, { x: 4.6, y, w: 3.2, h: 0.45, fontSize: 15, color: K.sub, align: "right" });
       s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: y + 0.6, w: W, h: 0.6, fill: { color: "EEF1F2" }, line: { type: "none" } });
       s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: y + 0.6, w: W * r, h: 0.6, fill: { color: c }, line: { type: "none" } });
-      T(s, `${Math.round(r * 100)}`, { x: 0.75, y: y + 0.6, w: 1, h: 0.6, fontSize: 18, bold: true, color: K.white, valign: "middle" });
+      T(s, `100 → ${Math.round(r * 100)}`, { x: 0.75, y: y + 0.6, w: 2.5, h: 0.6, fontSize: 18, bold: true, color: K.white, valign: "middle" });
       T(s, `約${dec(a, b)}%減`, { x: 8.1, y: y + 0.35, w: 2.6, h: 0.9, fontSize: 36, bold: true, color: i ? K.grey : K.teal, valign: "middle" });
     });
     box(s, 0.6, 5.55, 12.1, 0.85, K.tealL);
@@ -238,7 +244,8 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
         T(s, t, { x: x + 0.95, y, w: 4.8, h: 0.52, fontSize: 19, valign: "middle" });
       });
     }
-    T(s, "学校規模だけで教育の良し悪しが決まるものではありません。", { x: 0.6, y: 6.3, w: 12.1, h: 0.4, fontSize: 16, bold: true, color: K.sub, align: "center" });
+    T(s, "学校規模だけで教育の良し悪しが決まるものではありません。", { x: 0.6, y: 6.2, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: K.sub, align: "center" });
+    note(s, "各校の具体的な良さ・取り組みは、学校と地域から伺って追加します［聞き取り中］。", 6.62);
   }
 
   // 追加C 望ましい学校規模
@@ -246,7 +253,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const s = content("望ましい学校規模の目安と、若穂の見通し", "市の審議のまとめ（2018年）で示された目安に、推計を当てはめると");
     const crit = [["国の標準", "12〜18学級", "小学校・中学校とも（学校教育法施行規則）"], ["長野県の目安", "学年に複数の学級\n学年20人程度", "クラス替えができ、一定の集団で学べる規模"]];
     crit.forEach(([h, v, d], i) => {
-      const y = 1.7 + i * 2.2;
+      const y = 1.65 + i * 2.15;
       box(s, 0.6, y, 4.9, 2.0, K.tealL);
       T(s, h, { x: 0.9, y: y + 0.18, w: 4.3, h: 0.4, fontSize: 17, bold: true, color: K.teal });
       T(s, v, { x: 0.9, y: y + 0.55, w: 4.3, h: 0.95, fontSize: 22, bold: true, color: K.navy, valign: "middle" });
@@ -262,8 +269,10 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     });
     T(s, "学年の人数が20人未満になる学年の数", { x: 5.9, y: 1.7, w: 6.8, h: 0.45, fontSize: 18, bold: true, color: K.navy });
     s.addTable(rows, { x: 5.9, y: 2.25, w: 6.8, colW: [2.0, 2.4, 2.4], rowH: [0.6, 0.62, 0.62, 0.62, 0.62], fontSize: 17, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    T(s, "学級の数は、学級の人数の基準によって変わります。各校の学級数の見通しは［事務局に確認中］。", { x: 5.9, y: 5.5, w: 6.8, h: 0.7, fontSize: 15, color: K.sub });
-    note(s, "出典：長野市「少子化に対応した子どもにとって望ましい教育環境の在り方について（審議のまとめ）」（2018年）、推計（R8.5.1現在）", 6.45);
+    T(s, "学級の数は、学級の人数の基準によって変わります。各校の学級数の見通しは［事務局に確認中］。", { x: 5.9, y: 5.45, w: 6.8, h: 0.6, fontSize: 15, color: K.sub });
+    box(s, 0.6, 6.0, 12.1, 0.5, K.bg);
+    T(s, "目安を下回ることが、そのまま再編の理由にはなりません。校舎の新しさなど、各校の強みも合わせて比べます。", { x: 0.8, y: 6.0, w: 11.7, h: 0.5, fontSize: 15, bold: true, color: K.navy, valign: "middle" });
+    note(s, "出典：長野市「少子化に対応した子どもにとって望ましい教育環境の在り方について（審議のまとめ）」（2018年）、推計（R8.5.1現在）", 6.62);
     s.addNotes("目安を満たさないことが、ただちに再編の理由になるわけではないことを口頭で補足する。");
   }
 
@@ -271,7 +280,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   {
     const s = content("なぜ今、検討するのか");
     const rs = [["児童生徒数の減少は、今後も続く見通し", "小学生はR14（2032年度）までに約3割、中学生はR20（2038年度）までに5割以上減る推計", "MdTrendingDown"],
-      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度までに計画上の更新・改修時期を迎える", "MdApartment"],
+      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度までに計画上の更新・改修時期を迎える（実施状況は市に確認中）", "MdApartment"],
       ["通学や地域活動への影響を調べるには時間が必要", "調査・比較・地区ごとの対話に、2年ほどかけて丁寧に", "MdSchedule"],
       ["今の子どもと将来の子ども、両方の視点が必要", "在校生への配慮と、これから入学する子の環境の両立", "MdFamilyRestroom"]];
     for (let i = 0; i < 4; i++) {
@@ -289,19 +298,19 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const x0 = 2.6, x1 = 12.4, yr0 = 1970, yr1 = 2035, X = y => x0 + (y - yr0) / (yr1 - yr0) * (x1 - x0);
     [1970, 1980, 1990, 2000, 2010, 2020, 2030].forEach(yr => {
       s.addShape(pres.shapes.LINE, { x: X(yr), y: 1.85, w: 0, h: 4.1, line: { color: "E7ECEE", width: 1 } });
-      T(s, String(yr), { x: X(yr) - 0.4, y: 1.6, w: 0.8, h: 0.25, fontSize: 11, color: K.grey, align: "center" });
+      T(s, String(yr), { x: X(yr) - 0.4, y: 1.58, w: 0.8, h: 0.25, fontSize: 13, color: K.grey, align: "center" });
     });
     s.addShape(pres.shapes.LINE, { x: X(2026), y: 1.85, w: 0, h: 4.1, line: { color: K.amber, width: 1.5, dashType: "dash" } });
-    T(s, "現在", { x: X(2026) - 0.4, y: 5.98, w: 0.8, h: 0.25, fontSize: 11, color: K.amber, bold: true, align: "center" });
+    T(s, "現在", { x: X(2026) - 0.4, y: 5.98, w: 0.8, h: 0.25, fontSize: 13, color: K.amber, bold: true, align: "center" });
     const rows = [["川田小", 1973, 2023, "更新"], ["綿内小", 1980, 2030, "更新"], ["若穂中", 1987, 2027, "改修"], ["保科小", 2010, 2030, "改修"]];
     rows.forEach(([n, b, p, k], i) => {
       const y = 2.15 + i * 0.95;
       T(s, n, { x: 0.6, y, w: 1.0, h: 0.5, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
-      T(s, `${b}年度築`, { x: 1.5, y, w: 1.05, h: 0.5, fontSize: 12, color: K.sub, valign: "middle" });
+      T(s, `${b}年度築`, { x: 1.5, y, w: 1.1, h: 0.5, fontSize: 13, color: K.sub, valign: "middle" });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X(b), y: y + 0.1, w: X(2026) - X(b), h: 0.3, fill: { color: K.hill3 }, line: { type: "none" }, rectRadius: 0.15 });
-      T(s, `築${2026 - b}年`, { x: X(b) + 0.15, y: y + 0.1, w: 1.2, h: 0.3, fontSize: 11, bold: true, color: K.white, valign: "middle" });
+      T(s, `築${2026 - b}年`, { x: X(b) + 0.15, y: y + 0.1, w: 1.2, h: 0.3, fontSize: 13, bold: true, color: K.white, valign: "middle" });
       s.addShape(pres.shapes.DIAMOND, { x: X(p) - 0.14, y: y + 0.11, w: 0.28, h: 0.28, fill: { color: K.amber }, line: { color: K.white, width: 1 } });
-      T(s, `${p}年度（R${p - 2018}）${k}`, { x: X(p) + 0.2, y: y + 0.45, w: 2.2, h: 0.3, fontSize: 11, color: "A3402C", bold: true, align: p > 2028 ? "right" : "left", ...(p > 2028 ? { x: X(p) - 2.2 } : {}) });
+      T(s, `${p}年度（R${p - 2018}）${k}`, { x: X(p) - 2.45, y: y + 0.45, w: 2.6, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
     });
     note(s, "◆計画上の更新・改修時期　出典：長野市学校施設長寿命化計画（令和2年時点）。実施済み工事・最新計画の確認が必要です。", 6.4);
   }
@@ -323,7 +332,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   // 12 選択肢
   {
     const s = content("考えられる選択肢を公平に比較する");
-    const o = [["A", "現状維持", "3小学校・中学校を維持", "小規模化への対応"], ["B", "一部統合", "対象校を段階的に統合", "地域間の公平性・通学"], ["C", "小学校3校統合", "小学校を1校に集約", "校地・規模・通学"], ["D", "小中一貫の制度活用", "義務教育学校等を検討", "教育課程・施設・通学"]];
+    const o = [["A", "現状維持", "3小学校・中学校を維持", "小規模化への対応（複式学級の可能性など）"], ["B", "一部統合", "2校の統合など。組み合わせと統合先を比較", "地域間の公平性・通学"], ["C", "小学校3校統合", "小学校を1校に集約", "校地・規模・通学"], ["D", "小中一貫の制度活用", "義務教育学校等を検討", "教育課程・施設・通学"]];
     o.forEach(([L, h, d, p], i) => {
       const x = 0.6 + i * 3.08;
       box(s, x, 1.6, 2.86, 4.6, K.bg);
@@ -340,12 +349,12 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
 
   // 13 同じ物差し matrix
   {
-    const s = content("選択肢は同じ物差しで比較する", "評価欄は、今後の調査結果をもとに記入していきます");
+    const s = content("選択肢は同じ物差しで比較する", "評価欄は、R9（2027年度）の調査結果をもとに記入し、R9後半の中間報告でお示しします");
     const H = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center" } });
-    const crit = [["教育", "学習環境・交流・教員体制"], ["通学", "距離・時間・交通安全・費用"], ["施設", "安全性・整備費・維持管理費"], ["地域", "防災・行事・跡地利用"], ["実現性", "準備期間・財源・合意形成"]];
+    const crit = [["教育", "学習環境・交流・教員体制・特別支援"], ["通学", "距離・時間・交通安全・放課後"], ["施設", "安全性・整備費・維持管理費"], ["地域", "防災・行事・跡地利用・児童センター"], ["実現性", "準備期間・財源・合意形成"]];
     const rows = [[{ text: "視点", options: { bold: true, color: K.white, fill: { color: K.navy } } }, H("比べる内容"), H("A 現状維持"), H("B 一部統合"), H("C 3校統合"), H("D 小中一貫")]];
     crit.forEach(([a, b], i) => rows.push([{ text: a, options: { bold: true, color: K.teal, fontSize: 18 } }, { text: b, options: {} }, ...[0, 1, 2, 3].map(() => ({ text: "", options: { fill: { color: i % 2 ? K.white : K.bg } } }))]));
-    s.addTable(rows, { x: 0.6, y: 1.7, w: 12.1, colW: [1.4, 3.9, 1.7, 1.7, 1.7, 1.7], rowH: 0.78, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    s.addTable(rows, { x: 0.6, y: 1.7, w: 12.1, colW: [1.3, 4.4, 1.6, 1.6, 1.6, 1.6], rowH: 0.78, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
     note(s, "各選択肢の評価は、通学・施設・費用などの調査結果をもとに、委員会と地域で確認しながら記入します。", 6.6);
   }
 
@@ -372,7 +381,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   // 追加A 学校間の距離
   {
     const s = content("学校と学校の距離・移動時間の目安", "各小学校の間、各小学校と若穂中の間（地図は位置関係を示す概略図）");
-    box(s, 0.6, 1.6, 6.3, 5.0, K.bg);
+    box(s, 0.6, 1.6, 6.1, 5.0, K.bg);
     const P = { 綿内小: [36.622361, 138.262529], 川田小: [36.604091, 138.241565], 保科小: [36.5874875, 138.2655742], 若穂中: [36.604752, 138.251224] };
     const sc = 1.1, cx = 4.05, cy = 4.1, la0 = 36.6049, lo0 = 138.2536;
     const XY = n => [cx + (P[n][1] - lo0) * 89.4 * sc, cy - (P[n][0] - la0) * 111.0 * sc];
@@ -395,7 +404,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     });
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 6.3, w: 1.1, h: 0, line: { color: K.sub, width: 2 } });
     T(s, "1km", { x: 2.08, y: 6.18, w: 0.6, h: 0.25, fontSize: 11, color: K.sub });
-    T(s, "↑ 北", { x: 6.05, y: 1.75, w: 0.7, h: 0.3, fontSize: 12, bold: true, color: K.sub });
+    T(s, "↑ 北", { x: 2.9, y: 6.15, w: 0.7, h: 0.3, fontSize: 12, bold: true, color: K.sub });
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 1.9, w: 0.45, h: 0, line: { color: K.teal, width: 2.5 } });
     T(s, "小学校どうし", { x: 1.42, y: 1.77, w: 1.4, h: 0.26, fontSize: 11, color: K.sub });
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 2.2, w: 0.45, h: 0, line: { color: K.amber, width: 2.5, dashType: "dash" } });
@@ -405,11 +414,13 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       ["4", "綿内小 ⇔ 若穂中", "2.2", "約2.9", "約7分", "約45分"], ["5", "川田小 ⇔ 若穂中", "0.9", "約1.1", "約3分", "約15分"], ["6", "保科小 ⇔ 若穂中", "2.3", "約3.0", "約7分", "約45分"]];
     const rows = [[H("No"), H("区間"), H("直線\n(km)"), H("道のり\n(km)"), H("車"), H("徒歩")]];
     legRows.forEach((r, i) => rows.push(r.map((t, j) => ({ text: t, options: { align: j === 1 ? "left" : "center", bold: j < 2, color: j === 0 ? (i < 3 ? K.teal : K.amber) : K.ink, fill: { color: i % 2 ? K.white : K.bg } } }))));
-    s.addTable(rows, { x: 7.1, y: 1.6, w: 5.6, colW: [0.45, 1.85, 0.7, 0.8, 0.85, 0.95], rowH: [0.6, 0.48, 0.48, 0.48, 0.48, 0.48, 0.48], fontSize: 13, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    box(s, 7.1, 5.15, 5.6, 1.05, K.amberL);
-    T(s, "車は時速25km、徒歩は時速4km（小学生の目安）で概算。道のりは直線距離×1.3の目安です。実際の通学路での実測が必要です。", { x: 7.3, y: 5.2, w: 5.2, h: 0.95, fontSize: 12, color: "A3402C", valign: "middle" });
-    note(s, "学校の位置：地図サービスの所在地情報から作図。道路・河川は省略。", 6.7);
-    s.addNotes("距離は直線距離からの概算です。統合を検討する段階で、事務局が実際の通学路・スクールバスの経路で測り直す前提で示します。");
+    s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.5, 1.8, 0.65, 0.85, 0.9, 1.1], rowH: [0.6, 0.48, 0.48, 0.48, 0.48, 0.48, 0.48], fontSize: 14, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    box(s, 6.9, 5.28, 5.8, 0.68, K.tealL);
+    T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.28, w: 5.4, h: 0.68, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
+    box(s, 6.9, 6.02, 5.8, 0.62, K.amberL);
+    T(s, "学校と学校の距離で、子どもの通学距離ではありません。道のりは直線×1.3、車は時速25km・徒歩は時速4kmで概算。", { x: 7.1, y: 6.02, w: 5.4, h: 0.62, fontSize: 12, color: "A3402C", valign: "middle" });
+    note(s, "学校の位置：地図サービスの所在地から作図（道路・河川は省略）。国の目安：文部科学省の適正規模・適正配置の手引（2015年）。", 6.72);
+    s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。距離は直線距離からの概算です。統合を検討する段階で、事務局が実際の通学路・スクールバスの経路で測り直す前提で示します。");
   }
 
   // 追加B 避難所
@@ -431,15 +442,16 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const s = content("再編を考えるなら、生活への影響も見える化する");
     const v = [["通学", "各地区からの所要時間・スクールバスの要否・冬の安全対策", "MdDirectionsBus"], ["送迎", "保護者の送り迎えの負担、学校周辺の駐車と交通安全", "MdDirectionsCar"],
       ["放課後", "放課後児童クラブ（※）・児童センターの場所と定員、帰り道", "MdChildFriendly"], ["部活動", "中学校の部活動の種類と人数、地域のクラブへの移行の動き", "MdSportsBasketball"],
-      ["学校生活", "行事、学級の人数、友だち関係", "MdSchool"], ["地域", "学校行事・防災拠点・交流の継続", "MdHome"], ["施設・費用", "校舎・跡地の使い方、整備費・運営費・保護者の負担", "MdDomain"]];
+      ["学校生活", "行事、学級の人数、友だち関係", "MdSchool"], ["支援が必要な子", "特別支援学級・通級、医療的ケア、学校に行きづらい子の居場所", "MdAccessibility"],
+      ["地域", "運動会や祭りなど地区の行事、防災拠点、交流の継続", "MdHome"], ["施設・費用", "校舎・跡地の使い方、整備費・運営費・保護者の負担", "MdDomain"]];
     for (let i = 0; i < v.length; i++) {
-      const [h, d, ic] = v[i], y = 1.4 + i * 0.72;
-      box(s, 0.6, y, 12.1, 0.64, i % 2 ? K.white : K.bg, i % 2 ? K.line : null);
-      await iconCircle(s, 0.8, y + 0.07, 0.5, ic);
-      T(s, h, { x: 1.55, y, w: 2.2, h: 0.64, fontSize: 19, bold: true, color: K.navy, valign: "middle" });
-      T(s, d, { x: 3.75, y, w: 8.8, h: 0.64, fontSize: 17, valign: "middle" });
+      const [h, d, ic] = v[i], y = 1.35 + i * 0.64;
+      box(s, 0.6, y, 12.1, 0.57, i % 2 ? K.white : K.bg, i % 2 ? K.line : null);
+      await iconCircle(s, 0.8, y + 0.06, 0.45, ic);
+      T(s, h, { x: 1.5, y, w: 2.4, h: 0.57, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: 3.9, y, w: 8.65, h: 0.57, fontSize: 17, valign: "middle" });
     }
-    note(s, "※放課後児童クラブ：保護者が働いている家庭などの小学生が、放課後を過ごす場。", 6.55);
+    note(s, "※放課後児童クラブ：保護者が働いている家庭などの小学生が、放課後を過ごす場。", 6.5);
   }
 
   // 追加D どの案でもすぐ始められる学び
@@ -462,7 +474,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   // 16 ロードマップ
   {
     const s = content("今後の進め方｜検討ロードマップ（案）");
-    const ph = [["R8（2026）\n秋～冬", "現状・課題の共有", "住民意見の収集"], ["R9（2027）\n前半", "保護者調査", "通学・施設の実態把握"], ["R9（2027）\n後半", "複数案の比較", "中間報告"], ["R10（2028）\n前半", "地区別対話", "地域の方向性の整理"], ["R10（2028）\n後半以降", "地域提言", "市による検討・判断"]];
+    const ph = [["R8（2026）\n秋～冬", "現状・課題の共有", "住民意見の収集"], ["R9（2027）\n前半", "保護者・子どもの意見を聞く", "未就学児の保護者も対象"], ["R9（2027）\n後半", "複数案の比較", "通学・施設の調査を反映し中間報告"], ["R10（2028）\n前半", "地区別対話", "地域の方向性の整理"], ["R10（2028）\n後半以降", "地域提言", "市による検討・判断"]];
     ph.forEach(([d, a, b], i) => {
       const x = 0.6 + i * 2.44, now = i === 0;
       s.addShape(pres.shapes.CHEVRON, { x, y: 1.5, w: 2.5, h: 0.9, fill: { color: now ? K.amber : (i < 4 ? K.teal : K.navy) }, line: { type: "none" } });
@@ -481,7 +493,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       T(s, d, { x: x + 0.2, y: 5.67, w: 3.4, h: 0.65, fontSize: 15, color: K.ink });
       if (i < 2) s.addShape(pres.shapes.RIGHT_ARROW, { x: x + 3.8, y: 5.6, w: 0.25, h: 0.35, fill: { color: K.teal }, line: { type: "none" } });
     });
-    note(s, "スケジュールは提案であり、正式決定ではありません。決定までの手続きの詳細は［事務局に確認中］。", 6.5);
+    note(s, "スケジュールは提案であり、正式決定ではありません。実施の時期は提言の後に市が決めます。在校生への配慮の方針・手続きの詳細は［事務局に確認中］。", 6.5);
   }
 
   // 追加E 意見の出し方
@@ -489,20 +501,36 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const s = content("ご意見の出し方と、寄せられた意見の扱い方");
     const cols = [["出し方", "MdEditNote", [["アンケート用紙", "本日配布。会場の回収箱、または［提出先］へ"], ["インターネット", "［URL・QRコード］から回答できます"], ["地区での懇談会", "［日程・会場］"]]],
       ["締切・問い合わせ先", "MdPhone", [["締切", "令和8年（2026年）［　］月［　］日"], ["提出先", "［　　　　　　　］"], ["問い合わせ", "長野市教育委員会事務局 学校教育課\n電話［　　　　　　］"]]],
-      ["意見の扱い方（案）", "MdLock", [["すべて読みます", "検討委員会の委員が、寄せられた意見をすべて読みます"], ["まとめて公表します", "主な意見と委員会の考え方を［時期・方法］に公表します"], ["個人は特定しません", "お名前などの個人情報は公表しません"]]]];
+      ["意見の扱い方（案）", "MdLock", [["すべて読みます", "検討委員会の委員が、寄せられた意見をすべて読みます"], ["地区ごとに公表します", "地区ごとに集計し、委員会の考え方とあわせて［時期・方法］に公表します"], ["個人は特定しません", "お名前などの個人情報は公表しません"]]]];
     for (let i = 0; i < 3; i++) {
       const [h, ic, items] = cols[i], x = 0.6 + i * 4.1;
       box(s, x, 1.45, 3.9, 5.0, K.bg);
       await iconCircle(s, x + 0.3, 1.65, 0.7, ic);
       T(s, h, { x: x + 1.15, y: 1.65, w: 2.65, h: 0.7, fontSize: 20, bold: true, color: K.navy, valign: "middle" });
       items.forEach(([a, b], j) => {
-        const y = 2.6 + j * 1.25;
+        const y = 2.55 + j * 1.3;
         T(s, a, { x: x + 0.3, y, w: 3.4, h: 0.4, fontSize: 17, bold: true, color: K.teal });
-        T(s, b, { x: x + 0.3, y: y + 0.42, w: 3.4, h: 0.8, fontSize: 15, color: K.ink });
+        T(s, b, { x: x + 0.3, y: y + 0.42, w: 3.4, h: 0.85, fontSize: 15, color: K.ink });
       });
     }
-    note(s, "［ ］は事務局で確定後に記入します。意見の扱い方は案であり、委員会で決定します。", 6.6);
+    note(s, "本日の資料は［ホームページ・回覧］でもご覧いただけます。［ ］は事務局で確定後に記入します。意見の扱い方は案であり、委員会で決定します。", 6.6);
     s.addNotes("ご意見は、賛成・反対だけでなく「心配なこと」「知りたいこと」も歓迎する、と口頭で伝える。");
+  }
+
+  // 追加F 今日のまとめ
+  {
+    const s = content("今日のまとめ");
+    const pts = [["児童生徒は減る見通し", `3小学校の合計は${tot[0]}人→${tot[6]}人（R14＝2032年度）。若穂中も減少が続きます。`, "MdTrendingDown"],
+      ["何も決まっていません", "選択肢A〜Dを、同じ物差しで比べている途中です。", "MdCompareArrows"],
+      ["決める前に、皆さんの声を聞きます", "保護者・子ども・地域の意見を聞き、地区ごとにまとめて公表します。", "MdForum"],
+      ["ご意見をお寄せください", "締切：令和8年（2026年）［　］月［　］日　提出先：［　　　　］", "MdEditNote"]];
+    for (let i = 0; i < 4; i++) {
+      const [h, d, ic] = pts[i], y = 1.4 + i * 1.28;
+      box(s, 0.6, y, 12.1, 1.12, i % 2 ? K.white : K.bg, i % 2 ? K.line : null);
+      await iconCircle(s, 0.85, y + 0.18, 0.76, ic);
+      T(s, h, { x: 1.9, y: y + 0.1, w: 10.5, h: 0.48, fontSize: 21, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: 1.9, y: y + 0.58, w: 10.5, h: 0.45, fontSize: 17, color: K.ink, valign: "middle" });
+    }
   }
 
   // 17 一緒に考えたいこと
@@ -519,6 +547,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     T(s, "学校の数を減らすことではなく、未来の学びをつくること。", { x: 0.6, y: 5.45, w: 12.1, h: 0.8, fontSize: 26, bold: true, color: K.amber, align: "center", valign: "middle" });
   }
 
+  if (APPENDIX) {
   divider("05", "参考資料", "学年ごとの見通しと、用語の説明"); SEC = "参考資料";
   // 参考1〜3 学年別の見通し（3校とも同じ形式）
   for (const n of ["綿内小", "川田小", "保科小"]) {
@@ -537,21 +566,24 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     if (n === "川田小") s.addNotes("R11の4年「25」は写真からの読み取り値で、斜めに続く数値（R10の3年22人）と合わない。原本と照合すること。");
   }
 
-  // 参考4 用語集
-  {
-    const s = content("用語の説明");
-    const terms = [["推計", "今の子どもの数などをもとにした将来の見込み。転入・転出で変わります。"], ["再編", "学校の配置や仕組みを見直すこと。統合や通学区域の変更なども含みます。"],
-      ["統合", "複数の学校を一つにまとめること。"], ["通学区域（学区）", "住んでいる場所ごとに決められた、通う学校の範囲。"],
-      ["小中一貫教育", "小学校と中学校が、9年間を見通して一緒に教育を進める取り組み。"], ["義務教育学校", "小中9年間を一つの学校として教える学校。2016年度に始まった制度。"],
-      ["中1ギャップ", "中学校に進んだときの環境の変化になじめず、つまずきやすくなること。"], ["指定避難所", "災害で家に戻れない人が、しばらく過ごすために市が指定した施設。"],
-      ["長寿命化計画", "建物を計画的に改修して、長く使うための市の計画。"], ["放課後児童クラブ", "保護者が働いている家庭などの小学生が、放課後を過ごす場。"]];
-    terms.forEach(([h, d], i) => {
-      const x = 0.6 + (i % 2) * 6.15, y = 1.4 + Math.floor(i / 2) * 1.0;
-      box(s, x, y, 5.95, 0.9, i % 4 < 2 ? K.bg : K.white, i % 4 < 2 ? null : K.line);
-      T(s, h, { x: x + 0.2, y, w: 1.95, h: 0.9, fontSize: 16, bold: true, color: K.navy, valign: "middle" });
-      T(s, d, { x: x + 2.2, y, w: 3.6, h: 0.9, fontSize: 15, valign: "middle" });
+  // 参考4〜5 用語集
+  const terms = [["推計", "今の子どもの数などをもとにした将来の見込み。転入・転出で変わります。"], ["再編", "学校の配置や仕組みを見直すこと。統合や通学区域の変更なども含みます。"],
+    ["統合", "複数の学校を一つにまとめること。"], ["通学区域（学区）", "住んでいる場所ごとに決められた、通う学校の範囲。"],
+    ["複式学級", "子どもが少ないときに、2つの学年を1つの学級にまとめたもの。"], ["小中一貫教育", "小学校と中学校が、9年間を見通して一緒に教育を進める取り組み。"],
+    ["義務教育学校", "小中9年間を一つの学校として教える学校。2016年度に始まった制度。"], ["中1ギャップ", "中学校に進んだときの環境の変化になじめず、つまずきやすくなること。"],
+    ["特別支援学級", "障がいのある子どものために、小中学校の中に置かれる少人数の学級。"], ["通級", "ふだんの学級に在籍しながら、一部の時間だけ別の教室で支援を受ける仕組み。"],
+    ["指定緊急避難場所", "災害が迫ったときに、命を守るために逃げる場所。災害の種類ごとに指定されます。"], ["指定避難所", "災害で家に戻れない人が、しばらく過ごすために市が指定した施設。"],
+    ["長寿命化計画", "建物を計画的に改修して、長く使うための市の計画。"], ["放課後児童クラブ", "保護者が働いている家庭などの小学生が、放課後を過ごす場。"]];
+  for (let k = 0; k < 2; k++) {
+    const s = content(`用語の説明（${k + 1}/2）`);
+    terms.slice(k * 8, k * 8 + 8).forEach(([h, d], i) => {
+      const x = 0.6 + (i % 2) * 6.15, y = 1.4 + Math.floor(i / 2) * 1.22;
+      box(s, x, y, 5.95, 1.1, i % 4 < 2 ? K.bg : K.white, i % 4 < 2 ? null : K.line);
+      T(s, h, { x: x + 0.2, y, w: 2.0, h: 1.1, fontSize: 17, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: x + 2.25, y, w: 3.55, h: 1.1, fontSize: 16, valign: "middle" });
     });
     note(s, "年の表し方：令和の年に2018を足すと西暦になります（令和8年度＝2026年度、令和14年度＝2032年度、令和20年度＝2038年度）。", 6.4);
+  }
   }
 
   await pres.writeFile({ fileName: OUT });
