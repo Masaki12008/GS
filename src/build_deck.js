@@ -99,7 +99,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     hills(s);
     T(s, "若穂地区 小中学校再編検討｜住民説明会資料（案）", { x: 0.9, y: 0.7, w: 9, h: 0.4, fontSize: 15, color: "CFE0D6" });
     T(s, "これからの若穂の学校を考える", { x: 0.9, y: 1.5, w: 11.5, h: 1.1, fontSize: 50, bold: true, color: K.white });
-    T(s, "学校の数を決める前に、どんな学びを残したいか。", { x: 0.9, y: 2.75, w: 11.5, h: 0.7, fontSize: 28, bold: true, color: K.amber });
+    T(s, "結論の前に、子どもたちにどんな学びを残したいか。", { x: 0.9, y: 2.75, w: 11.5, h: 0.7, fontSize: 28, bold: true, color: K.amber });
     T(s, "子どもたちの未来と、地域のこれからを一緒に考えるために", { x: 0.9, y: 3.55, w: 11, h: 0.5, fontSize: 18, color: "CFE0D6" });
     T(s, "令和8年（2026年）［　］月［　］日　若穂地区小中学校再編検討委員会／長野市教育委員会事務局 学校教育課", { x: 0.9, y: 4.45, w: 11.5, h: 0.4, fontSize: 14, color: "CFE0D6" });
     s.addNotes("表紙。日付は事務局の確定後に記入。委員会名・事務局名の表記は要確認。");
@@ -109,7 +109,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   // 2 今日の流れ
   {
     const s = content("今日の説明会で共有したいこと");
-    const steps = [["現状を知る", "児童生徒数・施設の状況", "MdInsights"], ["課題を共有する", "教育環境・通学・地域への影響", "MdForum"], ["選択肢を比べる", "現状維持から再編まで", "MdCompareArrows"], ["意見を寄せる", "大切にしたいこと・懸念点", "MdRateReview"]];
+    const steps = [["現状を知る", "児童生徒数・施設の状況", "MdInsights"], ["課題を共有する", "教育環境・通学・地域への影響", "MdForum"], ["選択肢を比べる", "今の形を続ける案も含めて", "MdCompareArrows"], ["意見を寄せる", "大切にしたいこと・懸念点", "MdRateReview"]];
     for (let i = 0; i < 4; i++) {
       const [h, d, ic] = steps[i], x = 0.6 + i * 3.08;
       box(s, x, 1.7, 2.82, 3.9, K.bg);
@@ -125,7 +125,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
 
   // 3 出発点
   {
-    const s = content("検討の出発点｜誰のための学校再編か");
+    const s = content("検討の出発点｜誰のための検討か");
     box(s, 0.6, 1.6, 12.1, 1.7, K.teal);
     await iconCircle(s, 1.0, 1.9, 1.1, "MdChildCare", K.white, K.teal);
     T(s, "最優先は、子どもたちの学びと育ち", { x: 2.4, y: 1.6, w: 10, h: 1.7, fontSize: 32, bold: true, color: K.white, valign: "middle" });
@@ -437,14 +437,14 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     data.forEach((r, i) => rows.push(r.map((t, j) => ({ text: t, options: { align: j === 0 || j === 4 ? "left" : "center", bold: j === 0 || j === 2, fontSize: j === 2 ? 22 : 16, color: j === 2 ? K.teal : (j === 3 ? K.sub : K.ink), fill: { color: i % 2 ? K.white : K.bg } } }))));
     s.addTable(rows, { x: 0.6, y: 1.65, w: 12.1, colW: [2.2, 1.8, 1.8, 3.1, 3.2], rowH: [0.8, 0.7, 0.7, 0.7, 0.7], fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
     box(s, 0.6, 5.35, 12.1, 0.95, K.tealL);
-    T(s, "再編で使わなくなる校舎が出る場合は、避難所の機能をどう保つかを、地域と一緒に考える必要があります。", { x: 0.95, y: 5.35, w: 11.5, h: 0.95, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
+    T(s, "どの選択肢でも、学校が地域の避難所として役割を果たせるかを、比べる視点に入れます。", { x: 0.95, y: 5.35, w: 11.5, h: 0.95, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
     note(s, "指定避難所：長野市学校施設長寿命化計画 添付資料（令和2年4月時点）。災害種別ごとの指定は、市「指定緊急避難場所・指定避難所一覧」（令和7年7月17日）で確認してください。", 6.45);
     s.addNotes("災害の種類ごとの指定（洪水時に使えるかなど）は、市の最新一覧で事務局に確認のうえ埋めてください。");
   }
 
   // 15 生活への影響
   {
-    const s = content("再編を考えるなら、生活への影響も見える化する");
+    const s = content("どの選択肢でも、生活への影響を見える化する");
     const v = [["通学", "各地区からの所要時間・スクールバスの要否・冬の安全対策", "MdDirectionsBus"], ["送迎", "保護者の送り迎えの負担、学校周辺の駐車と交通安全", "MdDirectionsCar"],
       ["放課後", "放課後児童クラブ（※）・児童センターの場所と定員、帰り道", "MdChildFriendly"], ["部活動", "中学校の部活動の種類と人数、地域のクラブへの移行の動き", "MdSportsBasketball"],
       ["学校生活", "行事、学級の人数、友だち関係", "MdSchool"], ["支援が必要な子", "特別支援学級・通級、医療的ケア、学校に行きづらい子の居場所", "MdAccessibility"],
@@ -461,7 +461,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
 
   // 追加D どの案でもすぐ始められる学び
   {
-    const s = content("どの選択肢でも、すぐに始められる学びの例", "再編の結論を待たずに、3校と中学校で試せること");
+    const s = content("どの選択肢でも、すぐに始められる学びの例", "結論を待たずに、3校と中学校で試せること");
     const ex = [["3校合同の授業・行事", "合同の体育・音楽、合同の遠足や宿泊学習など、大きな集団での活動", "MdGroups"], ["保育園から中学校までの連携", "保育園・幼稚園児の学校体験、中学校の先生による出前授業、小6の中学校体験", "MdSchool"],
       ["オンラインの交流授業", "タブレットで3校の教室をつなぎ、一緒に話し合う授業", "MdComputer"], ["地域と一緒の学び", "地域の方を先生に迎える授業、地区の行事への参加", "MdHandshake"]];
     for (let i = 0; i < 4; i++) {
@@ -549,7 +549,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       T(s, `Q${i + 1}`, { x: x + 0.35, y, w: 0.9, h: 1.55, fontSize: 28, bold: true, color: K.amber, valign: "middle" });
       T(s, q[i], { x: x + 1.3, y, w: 4.4, h: 1.55, fontSize: 19, color: K.white, valign: "middle" });
     }
-    T(s, "学校の数を減らすことではなく、未来の学びをつくること。", { x: 0.6, y: 5.45, w: 12.1, h: 0.8, fontSize: 26, bold: true, color: K.amber, align: "center", valign: "middle" });
+    T(s, "目指すのは、子どもたちの未来の学びをつくること。", { x: 0.6, y: 5.45, w: 12.1, h: 0.8, fontSize: 26, bold: true, color: K.amber, align: "center", valign: "middle" });
   }
 
   if (APPENDIX) {
@@ -572,7 +572,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   }
 
   // 参考4〜5 用語集
-  const terms = [["推計", "今の子どもの数などをもとにした将来の見込み。転入・転出で変わります。"], ["再編", "学校の配置や仕組みを見直すこと。統合や通学区域の変更なども含みます。"],
+  const terms = [["推計", "今の子どもの数などをもとにした将来の見込み。転入・転出で変わります。"], ["再編", "学校の配置や仕組みを見直すこと。今の形を続けることも含めて検討します。"],
     ["統合", "複数の学校を一つにまとめること。"], ["通学区域（学区）", "住んでいる場所ごとに決められた、通う学校の範囲。"],
     ["複式学級", "子どもが少ないときに、2つの学年を1つの学級にまとめたもの。"], ["小中一貫教育", "小学校と中学校が、9年間を見通して一緒に教育を進める取り組み。"],
     ["義務教育学校", "小中9年間を一つの学校として教える学校。2016年度に始まった制度。"], ["中1ギャップ", "中学校に進んだときの環境の変化になじめず、つまずきやすくなること。"],
