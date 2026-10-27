@@ -410,17 +410,21 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 2.2, w: 0.45, h: 0, line: { color: K.amber, width: 2.5, dashType: "dash" } });
     T(s, "小学校と若穂中", { x: 1.42, y: 2.07, w: 1.6, h: 0.26, fontSize: 11, color: K.sub });
     const H = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center" } });
-    const legRows = [["1", "綿内小 ⇔ 川田小", "2.8", "約3.6", "約9分", "約55分"], ["2", "川田小 ⇔ 保科小", "2.8", "約3.7", "約9分", "約55分"], ["3", "綿内小 ⇔ 保科小", "3.9", "約5.1", "約12分", "約75分"],
-      ["4", "綿内小 ⇔ 若穂中", "2.2", "約2.9", "約7分", "約45分"], ["5", "川田小 ⇔ 若穂中", "0.9", "約1.1", "約3分", "約15分"], ["6", "保科小 ⇔ 若穂中", "2.3", "約3.0", "約7分", "約45分"]];
-    const rows = [[H("No"), H("区間"), H("直線\n(km)"), H("道のり\n(km)"), H("車"), H("徒歩")]];
-    legRows.forEach((r, i) => rows.push(r.map((t, j) => ({ text: t, options: { align: j === 1 ? "left" : "center", bold: j < 2, color: j === 0 ? (i < 3 ? K.teal : K.amber) : K.ink, fill: { color: i % 2 ? K.white : K.bg } } }))));
-    s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.5, 1.8, 0.65, 0.85, 0.9, 1.1], rowH: [0.6, 0.48, 0.48, 0.48, 0.48, 0.48, 0.48], fontSize: 14, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    box(s, 6.9, 5.28, 5.8, 0.68, K.tealL);
-    T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.28, w: 5.4, h: 0.68, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
-    box(s, 6.9, 6.02, 5.8, 0.62, K.amberL);
-    T(s, "学校と学校の距離で、子どもの通学距離ではありません。道のりは直線×1.3、車は時速25km・徒歩は時速4kmで概算。", { x: 7.1, y: 6.02, w: 5.4, h: 0.62, fontSize: 12, color: "A3402C", valign: "middle" });
-    note(s, "学校の位置：地図サービスの所在地から作図（道路・河川は省略）。国の目安：文部科学省の適正規模・適正配置の手引（2015年）。", 6.72);
-    s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。距離は直線距離からの概算です。統合を検討する段階で、事務局が実際の通学路・スクールバスの経路で測り直す前提で示します。");
+    T(s, "保科小は、ほかの3校より\n約100m高い所にあります", { x: 0.9, y: 2.45, w: 2.8, h: 0.55, fontSize: 12, color: K.sub });
+    // 道のり・時間：Google マップの経路検索（2026-10-27、input/maps/）。[区間, 徒歩km, 徒歩分, 車km, 車分]
+    const legRows = [["綿内小 ⇔ 川田小", "3.2", "44分", "3.5", "6分"], ["川田小 ⇔ 保科小", "3.0", "36分", "3.2", "5分"], ["綿内小 ⇔ 保科小", "4.9", "72分", "5.6", "8分"],
+      ["綿内小 ⇔ 若穂中", "2.5", "33分", "2.9", "5分"], ["川田小 ⇔ 若穂中", "1.1", "16分", "1.2", "3分"], ["保科小 ⇔ 若穂中", "2.5", "39分", "2.5", "4分"]];
+    const rows = [[Object.assign(H("No"), { options: Object.assign(H("").options, { rowspan: 2 }) }), Object.assign(H("区間"), { options: Object.assign(H("").options, { rowspan: 2 }) }),
+      Object.assign(H("徒歩"), { options: Object.assign(H("").options, { colspan: 2 }) }), Object.assign(H("車"), { options: Object.assign(H("").options, { colspan: 2 }) })],
+      [H("道のり"), H("時間"), H("道のり"), H("時間")]];
+    legRows.forEach((r, i) => rows.push([String(i + 1), r[0], `${r[1]}km`, r[2], `${r[3]}km`, r[4]].map((t, j) => ({ text: t, options: { align: j === 1 ? "left" : "center", bold: j < 2 || j === 3, color: j === 0 ? (i < 3 ? K.teal : K.amber) : K.ink, fill: { color: i % 2 ? K.white : K.bg } } }))));
+    s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.5, 1.8, 0.9, 0.8, 0.9, 0.9], rowH: [0.38, 0.38, 0.46, 0.46, 0.46, 0.46, 0.46, 0.46], fontSize: 14, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    box(s, 6.9, 5.25, 5.8, 0.68, K.tealL);
+    T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.25, w: 5.4, h: 0.68, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
+    box(s, 6.9, 6.0, 5.8, 0.62, K.amberL);
+    T(s, "学校と学校の距離で、子どもの通学距離ではありません。徒歩は大人の速さの目安で、子どもはもっとかかります。", { x: 7.1, y: 6.0, w: 5.4, h: 0.62, fontSize: 12, color: "A3402C", valign: "middle" });
+    note(s, "道のり・時間：Google マップの経路検索（2026年10月27日夜、片方向）。国の目安：文部科学省の適正規模・適正配置の手引（2015年）。", 6.72);
+    s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。道のりと時間はGoogle マップの経路検索（2026年10月27日の夜、片方向）。徒歩は大人の速さ、車は夜の交通量での値で、朝の通学時間帯は長くなることがある。保科小へ向かう徒歩は約100mの上り（若穂中→保科小 上り102m、綿内小→保科小 上り113m、保科小→川田小 下り104m）。各家庭からの距離と子どもの歩く速さでの実測は、事務局に依頼する。");
   }
 
   // 追加B 避難所
