@@ -281,7 +281,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   {
     const s = content("なぜ今、検討するのか");
     const rs = [["児童生徒数の減少は、今後も続く見通し", "小学生はR14（2032年度）までに約3割、中学生はR20（2038年度）までに5割以上減る推計", "MdTrendingDown"],
-      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度までに計画上の更新・改修時期を迎える（実施状況は市に確認中）", "MdApartment"],
+      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度までに、計画上の更新・改修の対象に入る（実施状況は市に確認中）", "MdApartment"],
       ["通学や地域活動への影響を調べるには時間が必要", "調査・比較・地区ごとの対話に、2年ほどかけて丁寧に", "MdSchedule"],
       ["今の子どもと将来の子ども、両方の視点が必要", "在校生への配慮と、これから入学する子の環境の両立", "MdFamilyRestroom"]];
     for (let i = 0; i < 4; i++) {
@@ -295,7 +295,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
 
   // 10 施設 timeline
   {
-    const s = content("施設の状況も、判断材料のひとつ", "建築年度と、計画上の更新・改修時期（長寿命化計画＝建物を計画的に改修して長く使うための市の計画）");
+    const s = content("施設の状況も、判断材料のひとつ", "建築年度と、計画上で更新・改修の対象に入る時期（長寿命化計画＝建物を計画的に改修して長く使うための市の計画）");
     const x0 = 2.6, x1 = 12.4, yr0 = 1970, yr1 = 2035, X = y => x0 + (y - yr0) / (yr1 - yr0) * (x1 - x0);
     [1970, 1980, 1990, 2000, 2010, 2020, 2030].forEach(yr => {
       s.addShape(pres.shapes.LINE, { x: X(yr), y: 1.85, w: 0, h: 4.1, line: { color: "E7ECEE", width: 1 } });
@@ -311,9 +311,9 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X(b), y: y + 0.1, w: X(2026) - X(b), h: 0.3, fill: { color: K.hill3 }, line: { type: "none" }, rectRadius: 0.15 });
       T(s, `築${2026 - b}年`, { x: X(b) + 0.15, y: y + 0.1, w: 1.2, h: 0.3, fontSize: 13, bold: true, color: K.white, valign: "middle" });
       s.addShape(pres.shapes.DIAMOND, { x: X(p) - 0.14, y: y + 0.11, w: 0.28, h: 0.28, fill: { color: K.amber }, line: { color: K.white, width: 1 } });
-      T(s, `${p}年度（R${p - 2018}）${k}`, { x: X(p) - 2.45, y: y + 0.45, w: 2.6, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
+      T(s, `${p}年度（R${p - 2018}）から${k}の対象`, { x: X(p) - 3.25, y: y + 0.45, w: 3.4, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
     });
-    note(s, "◆計画上の時期（添付資料、令和2年4月時点）。改訂版（令和5年6月）では若穂中の6棟はすべて「長寿命化に適する」判定。\n工事する建物と時期は随時決めるとされています。小学校3校の最新の判定と工事状況は［市に確認中］。", 6.3);
+    note(s, "◆更新・改修の対象に入る時期の目安で、工事が決まったものではありません（添付資料、令和2年4月時点）。\n改訂版（令和5年6月）では若穂中の6棟すべてが「長寿命化に適する」判定。工事の建物と時期は随時決定。小学校3校は［市に確認中］。", 6.3);
   }
 
   // 追加G 市の計画に書かれていること
