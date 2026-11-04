@@ -353,22 +353,29 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     }
   }
 
-  // 12 選択肢
+  // 12 選択肢（学校の配置 A〜C と、学校の制度 D・E を分けて示す）
   {
     const s = content("考えられる選択肢を公平に比較する");
-    const o = [["A", "現状維持", "3小学校・中学校を維持", "小規模化への対応（複式学級の可能性など）"], ["B", "一部統合", "2校の統合など。組み合わせと統合先を比較", "地域間の公平性・通学"], ["C", "小学校3校統合", "小学校を1校に集約", "校地・規模・通学"], ["D", "小中一貫の制度活用", "義務教育学校等を検討", "教育課程・施設・通学"]];
-    o.forEach(([L, h, d, p], i) => {
-      const x = 0.6 + i * 3.08;
-      box(s, x, 1.6, 2.86, 4.6, K.bg);
-      s.addShape(pres.shapes.OVAL, { x: x + 0.3, y: 1.9, w: 0.85, h: 0.85, fill: { color: K.navy }, line: { type: "none" } });
-      T(s, L, { x: x + 0.3, y: 1.9, w: 0.85, h: 0.85, fontSize: 28, bold: true, color: K.white, align: "center", valign: "middle" });
-      T(s, h, { x: x + 0.3, y: 2.95, w: 2.4, h: 0.95, fontSize: 21, bold: true, color: K.navy });
-      T(s, d, { x: x + 0.3, y: 3.95, w: 2.4, h: 0.8, fontSize: 16 });
-      s.addShape(pres.shapes.LINE, { x: x + 0.3, y: 4.85, w: 2.26, h: 0, line: { color: K.line, width: 1 } });
-      T(s, "主な論点", { x: x + 0.3, y: 5.0, w: 2.4, h: 0.3, fontSize: 12, color: K.teal, bold: true });
-      T(s, p, { x: x + 0.3, y: 5.32, w: 2.4, h: 0.7, fontSize: 15, color: K.sub });
+    const o = [["A", "現状維持", "3小学校・中学校を今の形で維持", "小規模化への対応（複式学級の可能性など）"], ["B", "一部統合", "2校の統合など。組み合わせと統合先を比較", "地域間の公平性・通学"], ["C", "小学校3校統合", "小学校を1校に集約", "校地・規模・通学"],
+      ["D", "義務教育学校", "小中9年間を一つの学校で。校長は1人", "教育課程・教員配置・施設・通学"], ["E", "小中一貫型の\n小学校・中学校", "小学校と中学校は別々の学校のまま、9年間の教育課程をそろえる", "教員の連携・行事・施設"]];
+    const W = 2.3, G = 0.15;
+    [["学校の配置", 0, 3], ["学校の制度（区分）", 3, 2]].forEach(([h, k, n]) => {
+      const x = 0.6 + k * (W + G), w = n * W + (n - 1) * G;
+      T(s, h, { x, y: 1.45, w, h: 0.35, fontSize: 16, bold: true, color: K.teal, align: "center" });
+      s.addShape(pres.shapes.LINE, { x, y: 1.83, w, h: 0, line: { color: K.teal, width: 2 } });
     });
-    note(s, "学校配置と教育制度は別の軸です。複数の方式を組み合わせることも可能です。", 6.4);
+    o.forEach(([L, h, d, p], i) => {
+      const x = 0.6 + i * (W + G);
+      box(s, x, 1.95, W, 4.3, K.bg);
+      s.addShape(pres.shapes.OVAL, { x: x + 0.2, y: 2.15, w: 0.7, h: 0.7, fill: { color: K.navy }, line: { type: "none" } });
+      T(s, L, { x: x + 0.2, y: 2.15, w: 0.7, h: 0.7, fontSize: 24, bold: true, color: K.white, align: "center", valign: "middle" });
+      T(s, h, { x: x + 0.2, y: 2.95, w: W - 0.35, h: 0.75, fontSize: 19, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: x + 0.2, y: 3.75, w: W - 0.35, h: 1.3, fontSize: 16 });
+      s.addShape(pres.shapes.LINE, { x: x + 0.2, y: 5.1, w: W - 0.4, h: 0, line: { color: K.line, width: 1 } });
+      T(s, "主な論点", { x: x + 0.2, y: 5.18, w: W - 0.35, h: 0.3, fontSize: 12, color: K.teal, bold: true });
+      T(s, p, { x: x + 0.2, y: 5.48, w: W - 0.35, h: 0.7, fontSize: 14, color: K.sub });
+    });
+    note(s, "学校の配置（A〜C）と学校の制度（D・E）は別の軸で、組み合わせることもできます。D（義務教育学校）とE（小中一貫型の小学校・中学校）は、法律上の区分が違う別の制度です。", 6.38);
   }
 
   // 13 同じ物差し matrix
@@ -376,30 +383,35 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const s = content("選択肢は同じ物差しで比較する", "評価欄は、R9（2027年度）の調査結果をもとに記入し、R9後半の中間報告でお示しします");
     const H = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center" } });
     const crit = [["教育", "学習環境・交流・教員体制・特別支援"], ["通学", "距離・時間・交通安全・放課後"], ["施設", "安全性・整備費・維持管理費"], ["地域", "防災・行事・跡地利用・児童センター"], ["実現性", "準備期間・財源・合意形成"]];
-    const rows = [[{ text: "視点", options: { bold: true, color: K.white, fill: { color: K.navy } } }, H("比べる内容"), H("A 現状維持"), H("B 一部統合"), H("C 3校統合"), H("D 小中一貫")]];
-    crit.forEach(([a, b], i) => rows.push([{ text: a, options: { bold: true, color: K.teal, fontSize: 18 } }, { text: b, options: {} }, ...[0, 1, 2, 3].map(() => ({ text: "", options: { fill: { color: i % 2 ? K.white : K.bg } } }))]));
-    s.addTable(rows, { x: 0.6, y: 1.7, w: 12.1, colW: [1.3, 4.4, 1.6, 1.6, 1.6, 1.6], rowH: 0.78, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    const rows = [[{ text: "視点", options: { bold: true, color: K.white, fill: { color: K.navy } } }, H("比べる内容"), H("A 現状維持"), H("B 一部統合"), H("C 3校統合"), H("D 義務教育学校"), H("E 小中一貫型")]];
+    crit.forEach(([a, b], i) => rows.push([{ text: a, options: { bold: true, color: K.teal, fontSize: 18 } }, { text: b, options: {} }, ...[0, 1, 2, 3, 4].map(() => ({ text: "", options: { fill: { color: i % 2 ? K.white : K.bg } } }))]));
+    s.addTable(rows, { x: 0.6, y: 1.7, w: 12.1, colW: [1.25, 3.6, 1.45, 1.45, 1.45, 1.45, 1.45], rowH: 0.78, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
     note(s, "評価の付け方（案）：事務局の調査結果をもとに、委員会が視点ごとに「良い・課題あり・調査中」で記入し、地区別対話で確認します。", 6.6);
   }
 
-  // 14 義務教育学校
+  // 14 義務教育学校と小中一貫型の小学校・中学校（別の区分として比べる）
   {
-    const s = content("義務教育学校という選択肢", "9年間を見通した教育を一体的に進める学校制度");
-    const cols = [["期待される点", K.teal, K.tealL, "MdTrendingUp", ["小中の学びの連続性", "教員同士の連携", "異学年交流", "中学校進学時の不安軽減"]],
-      ["慎重に考える点", K.amber, K.amberL, "MdWarningAmber", ["人間関係の固定化への配慮", "年齢差の大きい子どもの生活", "通学距離と安全", "施設配置と運営体制"]]];
-    for (let i = 0; i < 2; i++) {
-      const [h, c, cl, ic, items] = cols[i], x = 0.6 + i * 6.15;
-      box(s, x, 1.65, 5.95, 3.95, cl);
-      await iconCircle(s, x + 0.4, 1.95, 0.75, ic, c);
-      T(s, h, { x: x + 1.35, y: 1.95, w: 4.3, h: 0.75, fontSize: 24, bold: true, color: K.navy, valign: "middle" });
-      items.forEach((t, j) => {
-        const y = 2.95 + j * 0.65;
-        s.addShape(pres.shapes.OVAL, { x: x + 0.55, y: y + 0.16, w: 0.18, h: 0.18, fill: { color: c }, line: { type: "none" } });
-        T(s, t, { x: x + 0.95, y, w: 4.8, h: 0.5, fontSize: 19, valign: "middle" });
-      });
-    }
-    box(s, 0.6, 5.8, 12.1, 0.7, K.navy);
-    T(s, "義務教育学校＝必ず施設を一つに集約する、という意味ではありません。", { x: 0.95, y: 5.8, w: 11.5, h: 0.7, fontSize: 18, bold: true, color: K.white, valign: "middle" });
+    const s = content("義務教育学校と小中一貫型の小学校・中学校の違い", "どちらも9年間を見通して教えますが、法律上の学校の区分が違う、別の制度です");
+    const Hd = (t, c) => ({ text: t, options: { bold: true, color: K.white, fill: { color: c }, align: "center" } });
+    const R = [["学校の区分", "小学校・中学校とは別の種類の学校", "小学校と中学校（それぞれ今の区分のまま）"],
+      ["学校の数", "1校", "2校（小学校と中学校）"],
+      ["校長・教職員", "校長1人、教職員の組織も1つ", "学校ごとに校長と教職員の組織"],
+      ["学年", "1〜9年生（前期6年・後期3年）", "小学1〜6年生・中学1〜3年生"],
+      ["教育課程", "9年間で1つ", "2校で9年間の教育課程をそろえる"],
+      ["教員の免許", "原則、小学校と中学校の両方", "それぞれの学校の免許"]];
+    const rows = [[Hd("", K.navy), Hd("D 義務教育学校", K.navy), Hd("E 小中一貫型の小学校・中学校", K.teal)]];
+    R.forEach(([a, b, c], i) => rows.push([{ text: a, options: { bold: true, color: K.navy } }, { text: b, options: { fill: { color: i % 2 ? K.white : K.bg } } }, { text: c, options: { fill: { color: i % 2 ? K.white : K.bg } } }]));
+    s.addTable(rows, { x: 0.6, y: 1.55, w: 12.1, colW: [2.1, 5.0, 5.0], rowH: 0.5, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    const cols = [["どちらにも期待される点", K.teal, K.tealL, "学びのつながり・中学校に進むときの不安を減らす・異学年の交流"], ["どちらでも慎重に考える点", K.amber, K.amberL, "人間関係の固定化・年齢差の大きい子どもの生活・通学と施設"]];
+    cols.forEach(([h, c, cl, d], i) => {
+      const x = 0.6 + i * 6.15;
+      box(s, x, 5.2, 5.95, 0.95, cl);
+      T(s, h, { x: x + 0.25, y: 5.25, w: 5.5, h: 0.35, fontSize: 16, bold: true, color: c });
+      T(s, d, { x: x + 0.25, y: 5.6, w: 5.5, h: 0.5, fontSize: 15, color: K.ink });
+    });
+    T(s, "校舎は、どちらの制度でも、一つにまとめる形も、離れたままの形もあります。", { x: 0.6, y: 6.22, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: K.navy, align: "center" });
+    note(s, "出典：学校教育法（2016年4月施行の改正）、文部科学省「小中一貫した教育課程の編成・実施に関する手引」（2016年12月）。", 6.62);
+    s.addNotes("義務教育学校は小学校・中学校とは別の区分の学校。小中一貫型の小学校・中学校は、小学校と中学校がそれぞれの学校のまま教育課程をそろえるもの（同じ設置者の「併設型」、違う設置者の「連携型」がある）。両者を混同しないように説明する。義務教育学校の教員は原則として小中両方の免許が必要だが、当分の間はどちらか一方の免許で前期・後期を担当できる。");
   }
 
   // 追加A 学校間の距離
@@ -549,7 +561,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   {
     const s = content("今日のまとめ");
     const pts = [["児童生徒は減る見通し", `3小学校の合計は${tot[0]}人→${tot[6]}人（R14＝2032年度）。若穂中も減少が続きます。`, "MdTrendingDown"],
-      ["何も決まっていません", "選択肢A〜Dを、同じ物差しで比べている途中です。", "MdCompareArrows"],
+      ["何も決まっていません", "選択肢A〜Eを、同じ物差しで比べている途中です。", "MdCompareArrows"],
       ["決める前に、皆さんの声を聞きます", "保護者・子ども・地域の意見を聞き、地区ごとにまとめて公表します。", "MdForum"],
       ["ご意見をお寄せください", "締切：令和8年（2026年）［　］月［　］日　提出先：［　　　　］", "MdEditNote"]];
     for (let i = 0; i < 4; i++) {
@@ -597,8 +609,8 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
   // 参考4〜5 用語集
   const terms = [["推計", "今の子どもの数などをもとにした将来の見込み。転入・転出で変わります。"], ["再編", "学校の配置や仕組みを見直すこと。今の形を続けることも含めて検討します。"],
     ["統合", "複数の学校を一つにまとめること。"], ["通学区域（学区）", "住んでいる場所ごとに決められた、通う学校の範囲。"],
-    ["複式学級", "子どもが少ないときに、2つの学年を1つの学級にまとめたもの。"], ["小中一貫教育", "小学校と中学校が、9年間を見通して一緒に教育を進める取り組み。"],
-    ["義務教育学校", "小中9年間を一つの学校として教える学校。2016年度に始まった制度。"], ["中1ギャップ", "中学校に進んだときの環境の変化になじめず、つまずきやすくなること。"],
+    ["複式学級", "子どもが少ないときに、2つの学年を1つの学級にまとめたもの。"], ["小中一貫型の\n小学校・中学校", "小学校・中学校は別の学校のまま、9年間の教育課程をそろえる形。"],
+    ["義務教育学校", "小学校・中学校とは別の区分の学校。9年間を一つの学校で教える。"], ["中1ギャップ", "中学校に進んだときの環境の変化になじめず、つまずきやすくなること。"],
     ["特別支援学級", "障がいのある子どものために、小中学校の中に置かれる少人数の学級。"], ["通級", "ふだんの学級に在籍しながら、一部の時間だけ別の教室で支援を受ける仕組み。"],
     ["指定緊急避難場所", "災害が迫ったときに、命を守るために逃げる場所。災害の種類ごとに指定されます。"], ["指定避難所", "災害で家に戻れない人が、しばらく過ごすために市が指定した施設。"],
     ["長寿命化計画", "建物を計画的に改修して、長く使うための市の計画。"], ["放課後児童クラブ", "保護者が働いている家庭などの小学生が、放課後を過ごす場。"]];
