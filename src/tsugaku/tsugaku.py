@@ -2,14 +2,15 @@
 
 入力（input/tsugaku/）
 - 国勢調査2020_250mメッシュ_年齢3区分_5438.txt : e-Stat 国勢調査2020 5次メッシュ（250m）T001142（若穂周辺のみ抜粋）
-- 国土数値情報_A27-23_若穂.geojson : 国土数値情報 小学校区（令和5年度）から若穂の3校を抜粋
+- 国勢調査2020_小地域_若穂地区.geojson : 国勢調査2020の小地域（大字）境界を、市の地区の分け方（綿内／川田・牛島／保科）にまとめたもの
+  （国の小学校区データ A27 は、若穂団地の付近が市の地区の分け方と食い違うため使わない）
 出力（data/）
 - 通学距離_メッシュ.csv : メッシュごとの0〜14歳人口と、4校までの徒歩の道のり（m）
-- 通学距離_集計.json : 学区ごとの距離の分布
+- 通学距離_集計.json : 地区ごとの距離の分布（キーは「地区>学校」）
 道のりは OpenStreetMap のデータによる経路計算（routing.openstreetmap.de の徒歩）。ネット接続が必要。
 実行：pip install shapely → python3 src/tsugaku/tsugaku.py
 """
-import json, csv, collections, time, urllib.request, os
+import json, csv, collections, time, urllib.request, urllib.error, os
 from shapely.geometry import shape, Point
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 IN = os.path.join(ROOT, 'input', 'tsugaku'); OUT = os.path.join(ROOT, 'data')
@@ -26,39 +27,53 @@ def mesh_bounds(code):
     return lon, lat, lon + dlon * 2, lat + dlat * 2
 
 def main():
-    g = json.load(open(os.path.join(IN, '国土数値情報_A27-23_若穂.geojson'), encoding='utf-8'))
-    D = {f['properties']['A27_004'][:2] + '小': shape(f['geometry']) for f in g['features']}
+    g = json.load(open(os.path.join(IN, '国勢調査2020_小地域_若穂地区.geojson'), encoding='utf-8'))
+    D = {f['properties']['地区']: shape(f['geometry']) for f in g['features']}
     rows = list(csv.reader(open(os.path.join(IN, '国勢調査2020_250mメッシュ_年齢3区分_5438.txt'), encoding='cp932')))
     M = []
     for r in rows[2:]:
         b = mesh_bounds(r[0]); p = Point((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)
         s = [k for k, v in D.items() if v.contains(p)]
         if not s: continue
-        M.append(dict(code=r[0], school=s[0], lon=p.x, lat=p.y, b=b, pop=int(r[4]) if r[4].isdigit() else 0, kids=int(r[7]) if r[7].isdigit() else 0))
+        M.append(dict(code=r[0], chiku=s[0], lon=p.x, lat=p.y, b=b, pop=int(r[4]) if r[4].isdigit() else 0, kids=int(r[7]) if r[7].isdigit() else 0))
     K = [m for m in M if m['kids'] > 0]
     names = list(SCH)
-    for i in range(0, len(K), 40):
-        ch = K[i:i + 40]; n = len(ch)
+    # 前回の結果（data/通学距離_メッシュ.csv）があれば、道のりを再利用する
+    cache = {}
+    cf = os.path.join(OUT, '通学距離_メッシュ.csv')
+    if os.path.exists(cf):
+        for r in csv.DictReader(open(cf, encoding='utf-8')):
+            if r.get(f'{names[0]}まで徒歩(m)'): cache[r['メッシュコード']] = {n: float(r[f'{n}まで徒歩(m)']) for n in names}
+    for m in K:
+        if m['code'] in cache: m['foot'] = cache[m['code']]
+    todo = [m for m in K if 'foot' not in m]
+    for i in range(0, len(todo), 40):
+        ch = todo[i:i + 40]; n = len(ch)
         coords = [f"{m['lon']:.6f},{m['lat']:.6f}" for m in ch] + [f'{x},{y}' for x, y in SCH.values()]
         url = ('https://routing.openstreetmap.de/routed-foot/table/v1/foot/' + ';'.join(coords) +
                f"?sources={';'.join(map(str, range(n)))}&destinations={';'.join(map(str, range(n, n + 4)))}&annotations=distance")
-        d = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'wakaho-school-study'}), timeout=60))
+        for k in range(6):
+            try:
+                d = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'wakaho-school-study'}), timeout=60)); break
+            except urllib.error.HTTPError as e:
+                if e.code != 429 or k == 5: raise
+                time.sleep(10 * (k + 1))
         for j, m in enumerate(ch): m['foot'] = {names[k]: d['distances'][j][k] for k in range(4)}
         time.sleep(1)
     with open(os.path.join(OUT, '通学距離_メッシュ.csv'), 'w', encoding='utf-8', newline='') as f:
-        w = csv.writer(f); w.writerow(['メッシュコード', '学区', '経度', '緯度', '人口2020', '0〜14歳2020'] + [f'{n}まで徒歩(m)' for n in names])
+        w = csv.writer(f); w.writerow(['メッシュコード', '地区', '経度', '緯度', '人口2020', '0〜14歳2020'] + [f'{n}まで徒歩(m)' for n in names])
         for m in M:
-            w.writerow([m['code'], m['school'], f"{m['lon']:.6f}", f"{m['lat']:.6f}", m['pop'], m['kids']] + [round(m['foot'][n]) if 'foot' in m else '' for n in names])
+            w.writerow([m['code'], m['chiku'], f"{m['lon']:.6f}", f"{m['lat']:.6f}", m['pop'], m['kids']] + [round(m['foot'][n]) if 'foot' in m else '' for n in names])
     bins = [(0, 1000, '1km未満'), (1000, 2000, '1〜2km'), (2000, 3000, '2〜3km'), (3000, 4000, '3〜4km'), (4000, 6000, '4〜6km'), (6000, 1e9, '6km以上')]
     out = {}
-    for home in ['綿内小', '川田小', '保科小', '全体']:
-        sub = [m for m in K if home == '全体' or m['school'] == home]; tot = sum(m['kids'] for m in sub)
+    for home in ['綿内', '川田', '保科', '全体']:
+        sub = [m for m in K if home == '全体' or m['chiku'] == home]; tot = sum(m['kids'] for m in sub)
         for dest in names:
             c = collections.Counter(); wsum = 0; mx = 0
             for m in sub:
                 dd = m['foot'][dest]; c[next(l for a, z, l in bins if a <= dd < z)] += m['kids']; wsum += dd * m['kids']; mx = max(mx, dd)
             out[f'{home}>{dest}'] = dict(kids=tot, bins={l: c[l] for _, _, l in bins}, avg_m=round(wsum / tot), max_m=round(mx))
-    out['_pop2020'] = {k: sum(m['pop'] for m in M if m['school'] == k) for k in D}
+    out['_pop2020'] = {k: sum(m['pop'] for m in M if m['chiku'] == k) for k in D}
     json.dump(out, open(os.path.join(OUT, '通学距離_集計.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 if __name__ == '__main__':

@@ -22,8 +22,8 @@ for x in range(X0,X1+1):
     for y in range(Y0,Y1+1):
         b=urllib.request.urlopen(urllib.request.Request(f'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',headers={'User-Agent':'wakaho-school-study'})).read()
         base.paste(Image.open(io.BytesIO(b)).convert('RGB'),((x-X0)*256,(y-Y0)*256))
-g=json.load(open(os.path.join(IN,'国土数値情報_A27-23_若穂.geojson'),encoding='utf-8'))
-D={f['properties']['A27_004'][:2]+'小':shape(f['geometry']) for f in g['features']}
+g=json.load(open(os.path.join(IN,'国勢調査2020_小地域_若穂地区.geojson'),encoding='utf-8'))
+D={f['properties']['地区']:shape(f['geometry']) for f in g['features']}
 M=[dict(b=mesh_bounds(r['メッシュコード']),kids=int(r['0〜14歳2020'])) for r in csv.DictReader(open(os.path.join(OUT,'通学距離_メッシュ.csv'),encoding='utf-8'))]
 NAVY='#1D4636'; RAMP=['#D3E8DC','#9CCBB0','#55A07D','#1D6B4A']; BINS=[(1,4,'1〜4人'),(5,9,'5〜9人'),(10,19,'10〜19人'),(20,999,'20人以上')]
 U=None
@@ -46,15 +46,33 @@ for n,(lo,la,off,ha) in SCH.items():
     x,y=px(lo,la); ax.plot(x,y,'o',ms=11,mfc='white',mec=NAVY,mew=2.4,zorder=5)
     ax.annotate(n,(x,y),xytext=off,textcoords='offset points',ha=ha,va='center',fontsize=14,fontweight='bold',color=NAVY,zorder=6,
                 bbox=dict(boxstyle='round,pad=0.2',fc='white',ec='none',alpha=0.85))
-LAB={'綿内小':(138.293,36.632),'川田小':(138.2395,36.6185),'保科小':(138.293,36.574)}
+LAB={'綿内':(138.293,36.632),'川田':(138.2395,36.6185),'保科':(138.293,36.574)}
 for k,(lo,la) in LAB.items():
-    x,y=px(lo,la); ax.text(x,y,k+'学区',fontsize=16,fontweight='bold',color=NAVY,ha='center',va='center',zorder=6,bbox=dict(boxstyle='round,pad=0.3',fc='white',ec=NAVY,lw=1))
+    x,y=px(lo,la); ax.text(x,y,k+'地区',fontsize=16,fontweight='bold',color=NAVY,ha='center',va='center',zorder=6,bbox=dict(boxstyle='round,pad=0.3',fc='white',ec=NAVY,lw=1))
 # legend
 from matplotlib.patches import Patch
 hs=[Patch(facecolor=c,edgecolor='white',label=l) for c,(_,_,l) in zip(RAMP,BINS)]
-leg=ax.legend(handles=hs,title='0〜14歳の人数\n（250m四方、\n令和2年＝2020年）',loc='upper right',fontsize=12,title_fontsize=12,frameon=True,framealpha=0.92,borderpad=0.6)
-ax.text(xb-6,yb-6,'保科小学区は、この下（南）の山地まで続きます。地図：地理院タイル（淡色地図）',fontsize=7,color='#56635D',ha='right',va='bottom',zorder=7,bbox=dict(boxstyle='square,pad=0.25',fc='white',ec='none',alpha=0.9))
+leg=ax.legend(handles=hs,title='0〜14歳の人数\n（250m四方、\n令和2年＝2020年）',loc='lower left',fontsize=12,title_fontsize=12,frameon=True,framealpha=0.92,borderpad=0.6)
+ax.text(xb-6,yb-6,'保科地区は、この下（南）の山地まで続きます。地区の線は国勢調査の区域（大字）。地図：地理院タイル（淡色地図）',fontsize=7,color='#56635D',ha='right',va='bottom',zorder=7,bbox=dict(boxstyle='square,pad=0.25',fc='white',ec='none',alpha=0.9))
 fig.savefig(os.path.join(OUT,'map_wakaho.png'),dpi=220)
 print(fig.get_size_inches())
 # ファイルを軽くする（256色に減色）
 _p=os.path.join(OUT,'map_wakaho.png'); Image.open(_p).convert('RGB').quantize(256,dither=Image.Dither.NONE).save(_p,optimize=True)
+
+# A3（たて）の配布用の地図 → output/地図_若穂地区_A3.pdf
+import csv as _csv
+fig.savefig(os.path.join(OUT,'.map_hi.png'),dpi=330)
+hi=Image.open(os.path.join(OUT,'.map_hi.png'))
+A3=plt.figure(figsize=(11.69,16.54))
+A3.text(0.06,0.965,'若穂の地区と、子どもが住んでいる場所',fontsize=26,fontweight='bold',color=NAVY,va='top')
+A3.text(0.06,0.932,'緑のマス（250m四方）は0〜14歳の子どもが住んでいる場所で、色が濃いほど人数が多いことを表します。',fontsize=13,color='#1E2A26',va='top')
+axm=A3.add_axes([0.06,0.17,0.88,0.75]); axm.imshow(hi); axm.axis('off')
+_rows=list(_csv.DictReader(open(os.path.join(OUT,'若穂_町別人口_R8.10.1.csv'),encoding='utf-8')))
+_pop={c:sum(int(r['人口']) for r in _rows if r['地区']==c) for c in ['綿内','川田','保科']}
+_kids=json.load(open(os.path.join(OUT,'通学距離_集計.json'),encoding='utf-8'))
+_ji={'綿内小':273,'川田小':157,'保科小':54}  # 児童数推計（令和8年＝2026年5月1日現在、data/推計データ.csv）
+lines=[f"{c}地区：人口 {_pop[c]:,}人（令和8年＝2026年10月1日）／{s}の児童 {_ji[s]}人（令和8年＝2026年5月1日）／0〜14歳 {_kids[c+'>'+s]['kids']:,}人（令和2年＝2020年、中学生も含む）" for c,s in [('綿内','綿内小'),('川田','川田小'),('保科','保科小')]]
+A3.text(0.06,0.155,'\n'.join(lines),fontsize=11.5,color='#1E2A26',va='top',linespacing=1.6)
+A3.text(0.06,0.075,'地区の線：国勢調査（令和2年＝2020年）の小地域（大字）。川田地区は牛島を、保科地区は若穂団地・保科温泉を含みます。\n地区の線は、通学区域（学区）と一致しない場合があります。実際の通学区域は［市に確認中］。\n出典：総務省 国勢調査 地域メッシュ統計・小地域境界（e-Stat）、長野市 町別人口及び世帯数、国土地理院 地理院タイル（淡色地図）。\n若穂地区 小中学校再編検討｜住民説明会資料（案）',fontsize=10.5,color='#56635D',va='top',linespacing=1.6)
+A3.savefig(os.path.join(os.path.dirname(OUT),'output','地図_若穂地区_A3.pdf'))
+os.remove(os.path.join(OUT,'.map_hi.png'))

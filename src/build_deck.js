@@ -40,7 +40,7 @@ pres.defineSlideMaster({
 const T = (s, text, o) => s.addText(text, Object.assign({ isTextBox: true, margin: 0, fontSize: 16, color: K.ink, valign: "top", fontFace: FONT }, o));
 const box = (s, x, y, w, h, fill, line) => s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: fill }, line: line ? { color: line, width: 1 } : { type: "none" }, rectRadius: 0.12 });
 const sub = (s, text) => T(s, text, { x: 0.6, y: 1.12, w: 12.1, h: 0.4, fontSize: 16, color: K.sub });
-const note = (s, text, y = 6.55) => T(s, text, { x: 0.6, y, w: 12.1, h: 0.3, fontSize: 12, color: K.sub });
+const note = (s, text, y = 6.55) => T(s, text, { x: 0.6, y, w: 12.1, h: 0.3, fontSize: 13, color: K.sub });
 let SEC = "";
 const content = (title, subtitle) => { const s = pres.addSlide({ masterName: "CONTENT" }); if (SEC) T(s, SEC, { x: 0.6, y: 0.2, w: 6, h: 0.3, fontSize: 14, bold: true, color: K.amber }); s.addText(title, { placeholder: "title" }); if (subtitle) sub(s, subtitle); return s; };
 
@@ -291,7 +291,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("なぜ今、検討するのか");
     const rs = [["児童生徒数の減少は、今後も続く見通し", "小学生はR14（2032年度）までに約3割、中学生はR20（2038年度）までに5割以上減る推計", "MdTrendingDown"],
-      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度（R12）までに、計画上の更新・改修の対象に入る（実施状況は市に確認中）", "MdApartment"],
+      ["施設の更新・改修を考える時期と重なる", "4校すべてが2030年度（R12）までに、計画上の更新・改修の対象に入る（中身と実施状況は市に確認中）", "MdApartment"],
       ["通学や地域活動への影響を調べるには時間が必要", "調査・比較・地区ごとの対話に、2年ほどかけて丁寧に", "MdSchedule"],
       ["今の子どもと将来の子ども、両方の視点が必要", "在校生への配慮と、これから入学する子の環境の両立", "MdFamilyRestroom"]];
     for (let i = 0; i < 4; i++) {
@@ -319,11 +319,11 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       const y = 2.15 + i * 0.95;
       T(s, n, { x: 0.6, y, w: 1.9, h: 0.5, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X(b0), y: y + 0.1, w: X(2026) - X(b0), h: 0.3, fill: { color: K.hill3 }, line: { type: "none" }, rectRadius: 0.15 });
-      T(s, `${b0}〜${b1}年度（${WA(b0)}〜${WA(b1)}年度）に建てた${cnt}棟（最古は築${2026 - b0}年）`, { x: X(b0) + 0.1, y: y + 0.1, w: 7.0, h: 0.3, fontSize: 12, bold: true, color: K.white, valign: "middle" });
+      T(s, `${b0}〜${b1}年度（${WA(b0)}〜${WA(b1)}年度）に建てた${cnt}棟`, { x: X(b0) + 0.1, y: y + 0.1, w: 7.0, h: 0.3, fontSize: 13, bold: true, color: K.white, valign: "middle" });
       s.addShape(pres.shapes.DIAMOND, { x: X(p) - 0.14, y: y + 0.11, w: 0.28, h: 0.28, fill: { color: K.amber }, line: { color: K.white, width: 1 } });
       T(s, `${p}年度（R${p - 2018}）から${k}の対象（${WA(bb)}＝${bb}年度の棟で計算）`, { x: Math.min(X(p) + 0.15, X(2026) - 0.1) - 8.6, y: y + 0.45, w: 8.6, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
     });
-    note(s, "◆計画期間（R3〜R12＝2021〜2030年度）中に対象に入る時期の目安で、工事の予定ではありません（市の資料、R2＝2020年4月時点）。\n各校1つの棟で計算。旧耐震の棟は築50年で「更新」、新耐震は築20・40年で「改修」。4校とも全棟が長寿命化に適する判定。\n令和8年度（2026年度）、綿内小・川田小の北校舎と保科小の南校舎のトイレ改修を市が入札公告。棟の選び方は［市に確認中］。", 6.12);
+    note(s, "◆計画期間（R3〜R12＝2021〜2030年度）中に対象に入る時期の目安で、工事の予定ではありません（市の資料、R2＝2020年4月時点）。\n各校1つの棟で計算（旧耐震は築50年で「更新」、新耐震は築20・40年で「改修」）。「更新」が建て替えか改修かは［市に確認中］。\n4校とも全棟が長寿命化に適する判定。R8（2026）年度、綿内小・川田小の北校舎と保科小の南校舎のトイレ改修を入札公告。", 6.1);
     s.addNotes("年度は、計画の期間中に対象に入る目安を機械的に書いたもので、工事の予定ではない。旧耐震か新耐震かで、市内のどの学校も同じ書き方になっている（学校ごとに判断したものではない）。保科小は2010年度の棟（体育館の年度と同じ）で計算されているが、校舎は1977〜1999年度。どの棟で計算したかは市に確認中。出典：長野市学校施設長寿命化計画（令和3年（2021年）2月策定・令和5年（2023年）6月改訂）本文の施設一覧と添付資料。");
   }
 
@@ -331,8 +331,8 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("長野市の計画に書かれていること", "長野市学校施設長寿命化計画（R3＝2021年策定・R5＝2023年改訂）から。若穂について決めたものではありません");
     const cols = [["建物の使い方", "MdApartment", [["建設から40年後に長寿命化改修", "その後40年程度使えるようにする（建て替えより費用を抑える）"], ["改修に適さない建物は建て替え", "改修前に建物の強さを調べて判断する"]]],
-      ["市全体の費用", "MdPayments", [["令和8年度（2026年度）以降、年平均58億円が必要", "令和5〜7年度（2023〜2025年度。年30.4億円）より、年約28億円足りない見込み"], ["公共施設の総量を20年で20％減らす目標", "市の公共施設全体の方針（総合管理計画）"]]],
-      ["学校の配置の考え方", "MdGroups", [["統廃合も見据えて検討する", "各学校区の人口の動きを見極めながら"], ["地域に学校を残したい思いも受け止める", "例：小学校の低・中学年は地域で、高学年以上は大きな学校で学ぶ形の検討"]]]];
+      ["市全体の学校の費用", "MdPayments", [["R8（2026）年度以降の事業費は、年平均58億円の見込み", "R5〜R7（2023〜2025）年度の年30.4億円との差は、年約28億円"], ["「施設総量について今後20年間で20％縮減」", "学校に限らない、市の公共施設全体の目標（総合管理計画）"]]],
+      ["学校の配置の考え方", "MdGroups", [["「統廃合も見据えて適正配置について検討」", "各学校区の人口の動きを見極めながら"], ["「地域に学校を残したいという地域の思いも受け止め」", "例：小学校の低・中学年は地域で、高学年以上は大きな学校で学ぶ形の検討"]]]];
     for (let i = 0; i < 3; i++) {
       const [h, ic, items] = cols[i], x = 0.6 + i * 4.1;
       box(s, x, 1.6, 3.9, 4.6, K.bg);
@@ -345,7 +345,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       });
     }
     T(s, "市の方針も一つの前提として知ったうえで、若穂の子どもにとって何がよいかを、地域で考えます。", { x: 0.6, y: 6.3, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: K.sub, align: "center" });
-    note(s, "出典：長野市学校施設長寿命化計画（長野市教育委員会事務局総務課、令和3年（2021年）2月・令和5年（2023年）6月改訂）第4章・第5章・第6章。", 6.72);
+    note(s, "「 」は計画の文章の引用。出典：長野市学校施設長寿命化計画（R3＝2021年策定・R5＝2023年改訂）第4〜6章。", 6.7);
     s.addNotes("市全体の計画であり、若穂の学校をどうするかを決めたものではないことを、必ず口頭で伝える。施設総量20％縮減は学校に限らない公共施設全体の目標。");
   }
 
@@ -385,7 +385,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       T(s, "主な論点", { x: x + 0.2, y: 5.18, w: W - 0.35, h: 0.3, fontSize: 12, color: K.teal, bold: true });
       T(s, p, { x: x + 0.2, y: 5.48, w: W - 0.35, h: 0.7, fontSize: 14, color: K.sub });
     });
-    note(s, "学校の配置（A〜C）と学校の制度（D・E）は別の軸で、組み合わせることもできます。D（義務教育学校）とE（小中一貫型の小学校・中学校）は、法律上の区分が違う別の制度です。", 6.38);
+    note(s, "配置（A〜C）と制度（D・E）は別の軸で、組み合わせられます（例：A＋E＝3校と若穂中はそのままで、9年間の教育課程をそろえる）。\nD（義務教育学校）とE（小中一貫型の小学校・中学校）は、法律上の区分が違う別の制度です。", 6.38);
   }
 
   // 13 同じ物差し matrix
@@ -469,36 +469,36 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.25, w: 5.4, h: 0.68, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
     box(s, 6.9, 6.0, 5.8, 0.62, K.amberL);
     T(s, "学校と学校の距離で、子どもの通学距離ではありません。徒歩は大人の速さの目安で、子どもはもっとかかります。", { x: 7.1, y: 6.0, w: 5.4, h: 0.62, fontSize: 12, color: "A3402C", valign: "middle" });
-    note(s, "Google マップの経路検索（令和8年（2026年）10月27日夜）。2・3・6は保科小へ向かう上りの時間。国の目安：文部科学省の手引（平成27年＝2015年）。", 6.72);
+    note(s, "Google マップの経路検索（令和8年（2026年）10月27日夜）。2・3・6は保科小へ向かう上りの時間。国の目安：文部科学省の手引（平成27年＝2015年）。", 6.62);
     s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。道のりと時間はGoogle マップの経路検索（2026年10月27日の夜）。保科小が入る区間（2・3・6）は、保科小へ向かう上りの向きの時間（川田小→保科小46分、逆の下りは36分）。徒歩は大人の速さ、車は夜の交通量での値で、朝の通学時間帯は長くなることがある。保科小へ向かう徒歩は約100mの上り（若穂中→保科小 上り102m、綿内小→保科小 上り113m、保科小→川田小 下り104m）。各家庭からの距離と子どもの歩く速さでの実測は、事務局に依頼する。");
   }
 
   // 追加C 地区の地図と子どもが住む場所
   {
-    const s = content("若穂の地区と、子どもが住んでいる場所", "3つの地区は、それぞれの小学校の学区とほぼ重なります");
+    const s = content("若穂の地区と、子どもが住んでいる場所", "地区は市の区分（綿内・川田・保科）。地図の線は国勢調査の区域（大字）で、川田地区は牛島を含みます");
     s.addImage({ path: path.join(__dirname, "../data/map_wakaho.png"), x: 0.6, y: 1.5, h: 4.7, w: 4.7 * 1364 / 1510 });
     const pc = c => fmt(MACHI.filter(m => m.c === c).reduce((a, m) => a + m.p, 0));
     const hd = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center", fontSize: 14 } });
-    const rows = [[hd("地区（学区）"), hd("人口"), hd("小学校の児童"), hd("0〜14歳")],
+    const rows = [[hd("地区"), hd("人口"), hd("小学校の児童"), hd("0〜14歳（参考）")],
       ...[["綿内", "綿内小", 273], ["川田", "川田小", 157], ["保科", "保科小", 54]].map(([c, sc, n], i) => [
-        { text: `${c}（${sc}学区）`, options: { bold: true, color: K.navy } }, { text: `${pc(c)}人`, options: { align: "right" } },
-        { text: `${sc} ${n}人`, options: { align: "right" } }, { text: `${fmt(TG[sc + ">" + sc].kids)}人`, options: { align: "right" } }]),
-      [{ text: "若穂全体（若穂中学区）", options: { bold: true, color: K.navy, fontSize: 15 } }, { text: `${fmt(MACHI.reduce((a, m) => a + m.p, 0))}人`, options: { align: "right" } },
+        { text: `${c}地区`, options: { bold: true, color: K.navy } }, { text: `${pc(c)}人`, options: { align: "right" } },
+        { text: `${sc} ${n}人`, options: { align: "right" } }, { text: `${fmt(TG[c + ">" + sc].kids)}人`, options: { align: "right" } }]),
+      [{ text: "若穂全体", options: { bold: true, color: K.navy } }, { text: `${fmt(MACHI.reduce((a, m) => a + m.p, 0))}人`, options: { align: "right" } },
         { text: "若穂中 284人", options: { align: "right" } }, { text: `${fmt(TG["全体>若穂中"].kids)}人`, options: { align: "right" } }]];
     rows.forEach((r, i) => { if (i > 0) r.forEach(c => { c.options.fill = { color: i % 2 ? K.bg : K.white }; }); });
-    s.addTable(rows, { x: 5.4, y: 1.5, w: 7.3, colW: [2.9, 1.35, 1.7, 1.35], rowH: [0.5, 0.55, 0.55, 0.55, 0.55], fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    T(s, "時点　人口：R8（2026）年10月1日／児童・生徒：R8（2026）年5月1日／0〜14歳：R2（2020）年", { x: 5.4, y: 4.28, w: 7.3, h: 0.3, fontSize: 12, color: K.sub });
-    box(s, 5.4, 4.68, 7.3, 1.1, K.tealL);
-    T(s, "地図の緑のマス（250m四方）は、0〜14歳の子どもが住んでいる場所です。色が濃いほど人数が多いことを表します。どの地区でも、子どもは学校の近くの平地に多く住んでいます。", { x: 5.65, y: 4.68, w: 6.85, h: 1.1, fontSize: 16, color: K.navy, valign: "middle" });
-    T(s, "川田地区は牛島を、保科地区は若穂団地を含みます（市の町別人口の区分）。", { x: 5.4, y: 5.85, w: 7.3, h: 0.3, fontSize: 14, color: K.sub });
-    note(s, "出典：人口＝長野市「町別人口及び世帯数」（令和8年（2026年）10月1日）。児童・生徒＝提供資料（令和8年（2026年）5月1日現在）。0〜14歳＝国勢調査（令和2年＝2020年）250mメッシュ。学区＝国土数値情報 小学校区（令和5年度＝2023年度）。\n学区の線は国のデータによる目安で、若穂団地の付近（約330人）は川田小学区に入っています。実際の通学区域は［市に確認中］。", 6.25);
-    s.addNotes("0〜14歳の人数は2020年の国勢調査で、今の小学生の人数ではない。小学校の児童数は市教委の推計（令和8年（2026年）5月1日現在）。地区ごとの町（区）の人口は参考資料に載せている。");
+    s.addTable(rows, { x: 5.4, y: 1.5, w: 7.3, colW: [1.8, 1.5, 1.9, 2.1], rowH: [0.5, 0.55, 0.55, 0.55, 0.55], fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    T(s, "時点：人口 R8（2026）年10月1日、児童・生徒 R8（2026）年5月1日。\n0〜14歳（参考）はR2（2020）年の国勢調査の数で、中学生も含みます。", { x: 5.4, y: 4.35, w: 7.3, h: 0.55, fontSize: 13, color: K.sub });
+    box(s, 5.4, 4.98, 7.3, 0.85, K.tealL);
+    T(s, "緑のマス（250m四方）は0〜14歳の子どもが住む場所です（濃いほど多い）。どの地区でも、学校の近くの平地に多く住んでいます。", { x: 5.6, y: 4.98, w: 6.95, h: 0.85, fontSize: 15, color: K.navy, valign: "middle" });
+    T(s, "保科地区は若穂団地・保科温泉を含みます。大きな地図は別紙（A3）。", { x: 5.4, y: 5.88, w: 7.3, h: 0.3, fontSize: 14, color: K.sub });
+    note(s, "出典：人口＝長野市「町別人口及び世帯数」（令和8年（2026年）10月1日）。児童・生徒＝提供資料（令和8年（2026年）5月1日現在）。0〜14歳＝国勢調査（令和2年＝2020年）250mメッシュ。地区の線＝国勢調査の小地域（大字）。\n地区の線は、通学区域（学区）と一致しない場合があります。実際の通学区域は［市に確認中］。", 6.25);
+    s.addNotes("0〜14歳の人数は2020年の国勢調査で、今の小学生の人数ではない。メッシュの中心がどの大字に入るかで地区に振り分けた目安。国土数値情報の小学校区データでは若穂団地の付近が川田小学区に入るが、市の区分では保科地区のため、資料は市の地区の区分に合わせている。小学校の児童数は市教委の推計（令和8年（2026年）5月1日現在）。地区ごとの町（区）の人口は参考資料に載せている。");
   }
 
   // 追加D 家から学校までの道のり（推計）
   {
     const s = content("家から学校までの道のり（推計）", "子どもが住んでいる場所から、今の学校までの徒歩の道のり");
-    const R = [["綿内小学区 → 綿内小", "綿内小>綿内小"], ["川田小学区 → 川田小", "川田小>川田小"], ["保科小学区 → 保科小", "保科小>保科小"], ["若穂全体 → 若穂中", "全体>若穂中"]];
+    const R = [["綿内地区 → 綿内小", "綿内>綿内小"], ["川田地区 → 川田小", "川田>川田小"], ["保科地区 → 保科小", "保科>保科小"], ["若穂全体 → 若穂中", "全体>若穂中"]];
     const L = [["1km未満", ["1km未満"], "D3E8DC", K.ink], ["1〜2km", ["1〜2km"], "9CCBB0", K.ink], ["2〜3km", ["2〜3km"], "55A07D", K.white], ["3〜4km", ["3〜4km"], "2A6E52", K.white], ["4km以上", ["4〜6km", "6km以上"], "143D2D", K.white]];
     const x0 = 3.85, W = 8.85;
     L.forEach(([lab, , c], k) => { s.addShape(pres.shapes.RECTANGLE, { x: x0 + k * 1.55, y: 1.62, w: 0.28, h: 0.28, fill: { color: c }, line: { color: K.line, width: 0.5 } }); T(s, lab, { x: x0 + k * 1.55 + 0.36, y: 1.58, w: 1.15, h: 0.36, fontSize: 15, color: K.ink, valign: "middle" }); });
@@ -514,8 +514,8 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
         x += w;
       });
     });
-    const pts = [`小学校：3校とも、学区の子どもの9割以上が2km未満（綿内小${share("綿内小>綿内小", 2)}%・川田小${share("川田小>川田小", 2)}%・保科小${share("保科小>保科小", 2)}%）`,
-      `いちばん遠い場所：綿内小${km(TG["綿内小>綿内小"].max_m)}km・川田小${km(TG["川田小>川田小"].max_m)}km・保科小${km(TG["保科小>保科小"].max_m)}km／若穂中${km(TG["全体>若穂中"].max_m)}km`,
+    const pts = [`小学校：3地区とも、地区の子どもの9割以上が今の学校まで2km未満（綿内小${share("綿内>綿内小", 2)}%・川田小${share("川田>川田小", 2)}%・保科小${share("保科>保科小", 2)}%）`,
+      `いちばん遠い場所：綿内小${km(TG["綿内>綿内小"].max_m)}km・川田小${km(TG["川田>川田小"].max_m)}km・保科小${km(TG["保科>保科小"].max_m)}km／若穂中${km(TG["全体>若穂中"].max_m)}km`,
       "国の手引の目安（小学校おおむね4km以内・中学校おおむね6km以内）は、今は全員が満たしています"];
     box(s, 0.6, 5.5, 12.1, 0.95, K.bg);
     pts.forEach((p, k) => T(s, "・" + p, { x: 0.85, y: 5.53 + k * 0.3, w: 11.7, h: 0.3, fontSize: 15, color: K.ink }));
@@ -671,16 +671,16 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
 
   // 参考 地区ごとの子どもから各学校までの道のり
   {
-    const s = content("地区ごとの、子どもから各学校までの道のり（参考）", "どの選択肢でも同じ物差しで比べるため、すべての学校までの道のりを計算しました");
+    const s = content("地区ごとの、子どもから各学校までの道のり（参考）", "統合先を想定した表ではありません。どの地区からも、すべての学校までを同じ方法で計算した参考の数です");
     const hd = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center", fontSize: 15 } });
     const dests = ["綿内小", "川田小", "保科小", "若穂中"];
-    const rows = [[hd("住んでいる地区（学区）"), ...dests.map(d => hd(`${d}まで`))]];
-    [["綿内小学区", "綿内小"], ["川田小学区", "川田小"], ["保科小学区", "保科小"]].forEach(([lab, h], i) => rows.push([
-      { text: `${lab}\n（0〜14歳 ${TG[h + ">" + h].kids}人）`, options: { bold: true, color: K.navy, fontSize: 15 } },
-      ...dests.map(d => { const lim = d === "若穂中" ? 5 : 4; return { text: `平均 ${km(TG[h + ">" + d].avg_m)}km\n${d === "若穂中" ? "6" : "4"}km未満 ${share(h + ">" + d, lim)}%`, options: { align: "center", fontSize: 16, bold: d === h, fill: { color: d === h ? K.tealL : (i % 2 ? K.white : K.bg) } } }; })]));
+    const rows = [[hd("住んでいる地区"), ...dests.map(d => hd(`${d}まで`))]];
+    [["綿内地区", "綿内", "綿内小"], ["川田地区", "川田", "川田小"], ["保科地区", "保科", "保科小"]].forEach(([lab, h, own], i) => rows.push([
+      { text: `${lab}\n（0〜14歳 ${TG[h + ">" + own].kids}人）`, options: { bold: true, color: K.navy, fontSize: 15 } },
+      ...dests.map(d => { const lim = d === "若穂中" ? 5 : 4; return { text: `平均 ${km(TG[h + ">" + d].avg_m)}km\n${d === "若穂中" ? "6" : "4"}km未満 ${share(h + ">" + d, lim)}%`, options: { align: "center", fontSize: 16, bold: d === own, fill: { color: d === own ? K.tealL : (i % 2 ? K.white : K.bg) } } }; })]));
     s.addTable(rows, { x: 0.6, y: 1.65, w: 12.1, colW: [3.3, 2.2, 2.2, 2.2, 2.2], rowH: [0.55, 0.95, 0.95, 0.95], fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    T(s, "緑の枠は、今の学区の学校です。「4km未満」「6km未満」は、国の手引の目安（小学校おおむね4km・中学校おおむね6km）による区切りです。", { x: 0.6, y: 5.25, w: 12.1, h: 0.6, fontSize: 16, color: K.ink });
-    note(s, "250m四方の中心から各学校までの徒歩の道のり（OpenStreetMapによる経路計算、令和8年（2026年）11月）。0〜14歳は国勢調査（令和2年＝2020年）。学区は国土数値情報（令和5年度＝2023年度）。各家庭からの正確な距離ではありません。", 6.4);
+    T(s, "色の付いた欄は、今その地区の子どもが通う学校です。「4km未満」「6km未満」は、国の手引の目安（小学校おおむね4km・中学校おおむね6km）による区切りです。", { x: 0.6, y: 5.25, w: 12.1, h: 0.6, fontSize: 16, color: K.ink });
+    note(s, "250m四方の中心から各学校までの徒歩の道のり（OpenStreetMapによる経路計算、令和8年（2026年）11月）。0〜14歳は国勢調査（令和2年＝2020年）。地区は国勢調査の小地域（大字）による。各家庭からの正確な距離ではありません。", 6.4);
   }
 
   // 参考 町ごとの人口
