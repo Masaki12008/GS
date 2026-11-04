@@ -52,7 +52,7 @@ for k,(lo,la) in LAB.items():
 # legend
 from matplotlib.patches import Patch
 hs=[Patch(facecolor=c,edgecolor='white',label=l) for c,(_,_,l) in zip(RAMP,BINS)]
-leg=ax.legend(handles=hs,title='0〜14歳の人数\n（250m四方、2020年）',loc='upper right',fontsize=12,title_fontsize=12,frameon=True,framealpha=0.92,borderpad=0.6)
+leg=ax.legend(handles=hs,title='0〜14歳の人数\n（250m四方、\n令和2年＝2020年）',loc='upper right',fontsize=12,title_fontsize=12,frameon=True,framealpha=0.92,borderpad=0.6)
 ax.text(xb-6,yb-6,'保科小学区は、この下（南）の山地まで続きます。地図：地理院タイル（淡色地図）',fontsize=7,color='#56635D',ha='right',va='bottom',zorder=7,bbox=dict(boxstyle='square,pad=0.25',fc='white',ec='none',alpha=0.9))
 fig.savefig(os.path.join(OUT,'map_wakaho.png'),dpi=220)
 print(fig.get_size_inches())
