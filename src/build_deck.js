@@ -603,7 +603,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("ご意見の出し方と、寄せられた意見の扱い方");
     const cols = [["出し方", "MdEditNote", [["アンケート用紙", "本日配布。会場の回収箱、または［提出先］へ"], ["インターネット", "［URL・QRコード］から回答できます"], ["地区での懇談会", "［日程・会場］"]]],
-      ["締切・問い合わせ先", "MdPhone", [["締切", "令和8年（2026年）［　］月［　］日"], ["提出先", "［　　　　　　　］"], ["問い合わせ", "長野市教育委員会事務局 学校教育課\n電話［　　　　　　］"]]],
+      ["締切・問い合わせ先", "MdPhone", [["締切", "令和8年（2026年）［　］月［　］日"], ["提出先", "［　　　　　　　］"], ["問い合わせ", "長野市教育委員会事務局\n学校教育課\n電話［　　　　　　］"]]],
       ["意見の扱い方（案）", "MdLock", [["すべて読みます", "検討委員会の委員が、寄せられた意見をすべて読みます"], ["地区ごとに公表します", "地区ごとに集計し、委員会の考え方とあわせて［時期・方法］に公表します"], ["個人は特定しません", "お名前などの個人情報は公表しません"]]]];
     for (let i = 0; i < 3; i++) {
       const [h, ic, items] = cols[i], x = 0.6 + i * 4.1;
@@ -720,5 +720,6 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
 
   await pres.writeFile({ fileName: OUT });
   if (applyTheme) await applyTheme(OUT, THEME);
+  await require("./fix_fonts")(OUT, FONT);
   console.log("ok");
 })();

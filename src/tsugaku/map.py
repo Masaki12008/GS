@@ -11,7 +11,12 @@ from matplotlib import font_manager as fm
 from matplotlib.patches import Polygon as MP, Rectangle
 from PIL import Image
 from shapely.geometry import shape
-fp='/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf'; fm.fontManager.addfont(fp); plt.rcParams['font.family']=fm.FontProperties(fname=fp).get_name()
+# 書体：BIZ UDPゴシック（~/.fonts に入っていれば）。なければ IPA Pゴシック
+_cands=[os.path.expanduser('~/.fonts/BIZUDPGothic-Regular.ttf'),'/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf']
+fp=next(f for f in _cands if os.path.exists(f))
+for _f in [fp, fp.replace('Regular','Bold')]:
+    if os.path.exists(_f): fm.fontManager.addfont(_f)
+plt.rcParams['font.family']=fm.FontProperties(fname=fp).get_name()
 z=14; X0,X1,Y0,Y1=14482,14487,6397,6403
 def px(lon,lat):
     n=2**z; x=(lon+180)/360*n; y=(1-math.log(math.tan(math.radians(lat))+1/math.cos(math.radians(lat)))/math.pi)/2*n

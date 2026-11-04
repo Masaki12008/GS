@@ -49,7 +49,12 @@
 
 - `npm run build` は `NODE_PATH=node_modules` を付けて実行する（`apply_theme.js` が pptxgenjs を見つけられるようにするため）。
 - `src/build_deck.js` は、環境変数 `APPLY_THEME` に pptx スキルの `apply_theme.js` のパスがあれば、それでテーマ色を書き込む。なくても資料は作れる。
-- 見た目の確認は、LibreOffice で PDF にしてから画像化して行う。BIZ UDPゴシックがない環境では別のフォントで代わりに表示されるため、文字幅はおおよその確認になる。
+- 見た目の確認は、LibreOffice で PDF にしてから画像化して行う。
+- **PDFを作る前に BIZ UDPゴシックを入れる**（ない環境では別の書体に置き換わり、字の幅が変わる）。Google Fonts の配布元（OFLライセンス）から入れる：
+  `mkdir -p ~/.fonts && for f in BIZUDPGothic-Regular BIZUDPGothic-Bold; do curl -sSL -o ~/.fonts/$f.ttf https://raw.githubusercontent.com/google/fonts/main/ofl/bizudpgothic/$f.ttf; done && fc-cache -f`
+  確認は `pdffonts output/若穂地区_住民説明会資料.pdf`（BIZUDPGothic だけになっていればよい）。
+- `src/fix_fonts.js`：pptx のテーマの日本語用の書体（a:ea）が空だと別の書体に置き換わるため、ビルドの最後にテーマの書体を BIZ UDPゴシック にそろえている（build_deck.js・build_sheet.js から呼ぶ）。
+- 地図（`src/tsugaku/map.py`）も、~/.fonts に BIZ UDPゴシック があればそれを使う。
 
 ## 最新の資料の構成（配布用38枚・緑基調・区切りのページ5枚。投影用は1〜30枚目）
 
