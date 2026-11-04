@@ -55,6 +55,7 @@
   確認は `pdffonts output/若穂地区_住民説明会資料.pdf`（BIZUDPGothic だけになっていればよい）。
 - `src/fix_fonts.js`：pptx のテーマの日本語用の書体（a:ea）が空だと別の書体に置き換わるため、ビルドの最後にテーマの書体を BIZ UDPゴシック にそろえている（build_deck.js・build_sheet.js から呼ぶ）。
 - 地図（`src/tsugaku/map.py`）も、~/.fonts に BIZ UDPゴシック があればそれを使う。
+- **PowerPointでの文字の重なりの確認**：`python3 src/check_overflow.py output/若穂地区_住民説明会資料.pptx`（`pip install python-pptx fonttools`）。BIZ UDPゴシックの字幅で折り返しを計算し、枠の高さに収まらない文（PowerPointで下の文字に重なる）を一覧にする。ページ番号と、大きな数字に小さな「人」を付けた所（P6）は、計算上の誤検出なので無視してよい。注記（`note`）は行数から高さを決め、ページ下の行に重ならない位置まで自動で上げる。
 
 ## 最新の資料の構成（配布用38枚・緑基調・区切りのページ5枚。投影用は1〜30枚目）
 

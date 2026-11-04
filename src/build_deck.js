@@ -41,7 +41,9 @@ pres.defineSlideMaster({
 const T = (s, text, o) => s.addText(text, Object.assign({ isTextBox: true, margin: 0, fontSize: 16, color: K.ink, valign: "top", fontFace: FONT }, o));
 const box = (s, x, y, w, h, fill, line) => s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: fill }, line: line ? { color: line, width: 1 } : { type: "none" }, rectRadius: 0.12 });
 const sub = (s, text) => T(s, text, { x: 0.6, y: 1.12, w: 12.1, h: 0.4, fontSize: 16, color: K.sub });
-const note = (s, text, y = 6.55) => T(s, text, { x: 0.6, y, w: 12.1, h: 0.3, fontSize: 13, color: K.sub });
+// 出典などの注記。行数から高さを決め、ページ下の行（y=7.05）に重ならないように上へずらす
+const noteLines = text => text.split("\n").reduce((a, l) => a + Math.max(1, Math.ceil([...l].reduce((w, c) => w + (c.charCodeAt(0) < 0x2000 ? 0.55 : 1), 0) * 13 / (12.1 * 72 * 0.93))), 0);
+const note = (s, text, y = 6.55) => { const h = noteLines(text) * 13 * 1.25 / 72; T(s, text, { x: 0.6, y: Math.min(y, 6.98 - h), w: 12.1, h, fontSize: 13, color: K.sub }); };
 let SEC = "";
 const content = (title, subtitle) => { const s = pres.addSlide({ masterName: "CONTENT" }); if (SEC) T(s, SEC, { x: 0.6, y: 0.2, w: 6, h: 0.3, fontSize: 14, bold: true, color: K.amber }); s.addText(title, { placeholder: "title" }); if (subtitle) sub(s, subtitle); return s; };
 
@@ -182,10 +184,10 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("3小学校の児童数合計は約32％減少", "令和8年度（2026年度）→ 令和14年度（2032年度）");
     // 数字と「人」は1つの枠に入れる（別の枠にすると、表示する環境によって重なる）
-    T(s, [{ text: `${tot[0]}`, options: { fontSize: 66, bold: true } }, { text: " 人", options: { fontSize: 22 } }], { x: 0.6, y: 1.8, w: 3.2, h: 1.2, color: K.grey, align: "right", valign: "bottom" });
+    T(s, [{ text: `${tot[0]}`, options: { fontSize: 66, bold: true } }, { text: " 人", options: { fontSize: 22 } }], { x: 0.2, y: 1.8, w: 3.6, h: 1.2, color: K.grey, align: "right", valign: "bottom" });
     T(s, "令和8年度（2026）", { x: 0.6, y: 3.0, w: 3.1, h: 0.4, fontSize: 15, color: K.sub, align: "right" });
     s.addShape(pres.shapes.RIGHT_ARROW, { x: 3.95, y: 2.15, w: 1.0, h: 0.6, fill: { color: K.line }, line: { type: "none" } });
-    T(s, [{ text: `${tot[6]}`, options: { fontSize: 66, bold: true } }, { text: " 人", options: { fontSize: 22 } }], { x: 5.1, y: 1.8, w: 3.1, h: 1.2, color: K.teal, valign: "bottom" });
+    T(s, [{ text: `${tot[6]}`, options: { fontSize: 66, bold: true } }, { text: " 人", options: { fontSize: 22 } }], { x: 5.1, y: 1.8, w: 3.3, h: 1.2, color: K.teal, valign: "bottom" });
     T(s, "令和14年度（2032）", { x: 5.1, y: 3.0, w: 3.1, h: 0.4, fontSize: 15, color: K.sub });
     s.addChart(pres.charts.BAR, [{ name: "3小学校の合計", labels: Y7.map(YL), values: tot }], Object.assign({}, chartBase, {
       x: 8.3, y: 1.55, w: 4.5, h: 2.9, barDir: "col", chartColors: [K.teal], barGapWidthPct: 40, valAxisHidden: true, valGridLine: { style: "none" }, valAxisMinVal: 0,
@@ -594,7 +596,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       const tag = { done: "済み", now: "今ここ", goal: "目標" }[st];
       if (tag) T(s, tag, { x: x + 0.2, y: 2.62, w: 1.5, h: 0.3, fontSize: 13, bold: true, color: now ? K.amber : K.teal });
       T(s, a, { x: x + 0.2, y: 2.92, w: W - 0.4, h: 0.75, fontSize: 16, bold: true, color: K.navy });
-      T(s, b, { x: x + 0.2, y: 3.7, w: W - 0.35, h: 0.8, fontSize: 13, color: K.sub });
+      T(s, b, { x: x + 0.2, y: 3.65, w: W - 0.3, h: 0.85, fontSize: 13, color: K.sub });
     });
     T(s, "検討の結果が長野市に届くまで", { x: 0.6, y: 4.75, w: 6, h: 0.4, fontSize: 18, bold: true, color: K.navy });
     const who = [["若穂地区小中学校再編検討委員会", "皆さんの意見をもとに、\n委員会としての方向性をまとめる"], ["若穂地区住民自治協議会", "委員会の方向性を受けて、\n長野市に答申する"], ["長野市", "答申を受けて、\n市が検討・判断する"]];
