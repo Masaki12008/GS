@@ -402,7 +402,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
     const rows = [[Hd("", K.navy), Hd("D 義務教育学校", K.navy), Hd("E 小中一貫型の小学校・中学校", K.teal)]];
     R.forEach(([a, b, c], i) => rows.push([{ text: a, options: { bold: true, color: K.navy } }, { text: b, options: { fill: { color: i % 2 ? K.white : K.bg } } }, { text: c, options: { fill: { color: i % 2 ? K.white : K.bg } } }]));
     s.addTable(rows, { x: 0.6, y: 1.55, w: 12.1, colW: [2.1, 5.0, 5.0], rowH: 0.5, fontSize: 16, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    const cols = [["どちらにも期待される点", K.teal, K.tealL, "学びのつながり・中学校に進むときの不安を減らす・異学年の交流"], ["どちらでも慎重に考える点", K.amber, K.amberL, "人間関係の固定化・年齢差の大きい子どもの生活・通学と施設"]];
+    const cols = [["どちらにも期待される点", K.teal, K.tealL, "学びのつながり・中学校に進むときの不安を減らす・異学年の交流・小中の教員の連携"], ["どちらでも慎重に考える点", K.amber, K.amberL, "人間関係の固定化・年齢差の大きい子どもの生活・通学と施設"]];
     cols.forEach(([h, c, cl, d], i) => {
       const x = 0.6 + i * 6.15;
       box(s, x, 5.2, 5.95, 0.95, cl);
