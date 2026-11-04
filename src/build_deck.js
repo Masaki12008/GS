@@ -301,8 +301,8 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       s.addShape(pres.shapes.LINE, { x: X(yr), y: 1.85, w: 0, h: 4.1, line: { color: "E7ECEE", width: 1 } });
       T(s, String(yr), { x: X(yr) - 0.4, y: 1.58, w: 0.8, h: 0.25, fontSize: 13, color: K.grey, align: "center" });
     });
-    s.addShape(pres.shapes.LINE, { x: X(2026), y: 1.85, w: 0, h: 4.1, line: { color: K.amber, width: 1.5, dashType: "dash" } });
-    T(s, "現在", { x: X(2026) - 0.4, y: 5.98, w: 0.8, h: 0.25, fontSize: 13, color: K.amber, bold: true, align: "center" });
+    s.addShape(pres.shapes.LINE, { x: X(2026), y: 1.85, w: 0, h: 3.95, line: { color: K.amber, width: 1.5, dashType: "dash" } });
+    T(s, "現在", { x: X(2026) - 0.4, y: 5.8, w: 0.8, h: 0.25, fontSize: 13, color: K.amber, bold: true, align: "center" });
     // [学校, 最も古い棟, 最も新しい棟, 棟数, 計画上の年度, 内容, 計画で使われた棟の建築年度]（本文の施設一覧と添付資料。docs/提供情報まとめ.md の7）
     const rows = [["綿内小", 1972, 2000, 4, 2030, "更新", 1980], ["川田小", 1973, 1994, 5, 2023, "更新", 1973], ["保科小", 1977, 2010, 6, 2030, "築20年の改修", 2010], ["若穂中", 1987, 1997, 6, 2027, "築40年の改修", 1987]];
     rows.forEach(([n, b0, b1, cnt, p, k, bb], i) => {
@@ -313,7 +313,7 @@ const chartBase = { catAxisLabelColor: K.sub, valAxisLabelColor: K.sub, catAxisL
       s.addShape(pres.shapes.DIAMOND, { x: X(p) - 0.14, y: y + 0.11, w: 0.28, h: 0.28, fill: { color: K.amber }, line: { color: K.white, width: 1 } });
       T(s, `${p}年度（R${p - 2018}）から${k}の対象（${bb}年度の棟で計算）`, { x: Math.min(X(p) + 0.15, X(2026) - 0.1) - 7.0, y: y + 0.45, w: 7.0, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
     });
-    note(s, "◆計画の期間（2021〜2030年度）中に対象に入る時期の目安で、工事が決まったものではありません（市の添付資料、令和2年4月時点）。\n各校1つの棟で計算。多くの学校と同じく、旧耐震（1981年6月より前の基準）の棟は築50年で「更新」、新耐震の棟は築20・40年で「改修」。\n4校とも全部の棟が「長寿命化に適する」判定（本文の施設一覧）。工事の建物と時期は随時決定。計算に使った棟の選び方は［市に確認中］。", 6.2);
+    note(s, "◆計画期間（2021〜2030年度）中に対象に入る時期の目安。工事が決まったものではありません（市の添付資料、令和2年4月時点）。\n各校1つの棟で計算。旧耐震の棟は築50年で「更新」、新耐震は築20・40年で「改修」。4校とも全棟が長寿命化に適する判定。\n令和8年度（2026年度）、綿内小・川田小の北校舎と保科小の南校舎のトイレ改修を市が入札公告。棟の選び方は［市に確認中］。", 6.12);
     s.addNotes("年度は、計画の期間中に対象に入る目安を機械的に書いたもので、工事の予定ではない。旧耐震か新耐震かで、市内のどの学校も同じ書き方になっている（学校ごとに判断したものではない）。保科小は2010年度の棟（体育館の年度と同じ）で計算されているが、校舎は1977〜1999年度。どの棟で計算したかは市に確認中。出典：長野市学校施設長寿命化計画（令和3年2月策定・令和5年6月改訂）本文の施設一覧と添付資料。");
   }
 
