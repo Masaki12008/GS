@@ -596,16 +596,16 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       T(s, a, { x: x + 0.2, y: 2.92, w: W - 0.4, h: 0.75, fontSize: 16, bold: true, color: K.navy });
       T(s, b, { x: x + 0.2, y: 3.7, w: W - 0.35, h: 0.8, fontSize: 13, color: K.sub });
     });
-    T(s, "誰が決めるのか", { x: 0.6, y: 4.75, w: 4, h: 0.4, fontSize: 18, bold: true, color: K.navy });
-    const who = [["地域（検討委員会）", "意見をまとめ、市へ提言する"], ["長野市教育委員会", "提言を受けて、方針を検討・決定する"], ["長野市議会", "設置・廃止は条例で定め、\n議会で審議・議決する"]];
+    T(s, "検討の結果が長野市に届くまで", { x: 0.6, y: 4.75, w: 6, h: 0.4, fontSize: 18, bold: true, color: K.navy });
+    const who = [["若穂地区小中学校再編検討委員会", "皆さんの意見をもとに、\n委員会としての方向性をまとめる"], ["若穂地区住民自治協議会", "委員会の方向性を受けて、\n長野市に答申する"], ["長野市", "答申を受けて、\n市が検討・判断する"]];
     who.forEach(([h, d], i) => {
       const x = 0.6 + i * 4.1;
       box(s, x, 5.2, 3.75, 1.15, K.tealL);
-      T(s, h, { x: x + 0.2, y: 5.27, w: 3.4, h: 0.4, fontSize: 17, bold: true, color: K.teal });
+      T(s, h, { x: x + 0.2, y: 5.27, w: 3.5, h: 0.4, fontSize: h.length > 13 ? 15 : 17, bold: true, color: K.teal });
       T(s, d, { x: x + 0.2, y: 5.67, w: 3.4, h: 0.65, fontSize: 15, color: K.ink });
       if (i < 2) s.addShape(pres.shapes.RIGHT_ARROW, { x: x + 3.8, y: 5.6, w: 0.25, h: 0.35, fill: { color: K.teal }, line: { type: "none" } });
     });
-    note(s, "R10（2028）年度以降は、検討の進み具合に応じて見直します。スケジュールは目標であり、正式決定ではありません。在校生への配慮の方針・手続きの詳細は［事務局に確認中］。", 6.5);
+    note(s, "R10（2028）年度以降は、検討の進み具合に応じて見直します。スケジュールは目標であり、正式決定ではありません。答申を受けた後の市の手続き・在校生への配慮の方針は［事務局に確認中］。", 6.5);
   }
 
   // 追加E 意見の出し方
