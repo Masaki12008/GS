@@ -10,6 +10,7 @@ try { ({ applyTheme } = require(process.env.APPLY_THEME || "/mnt/skills/public/p
 
 const OUT = process.argv[2] || "output/若穂地区_住民説明会資料.pptx";
 const APPENDIX = process.env.APPENDIX !== "0"; // APPENDIX=0 で参考資料を除いた投影用を作る
+const SHORT = process.env.SHORT === "1"; // SHORT=1 で配布用の短縮版（区切りのページ・Q1〜Q4のページを外し、用語の説明を1枚に）
 const FONT = "BIZ UDPゴシック";
 const K = { navy: "1D4636", teal: "2E7D5B", tealL: "E8F2EC", amber: "D9573E", amberL: "FCEBE6", ink: "1E2A26", sub: "56635D", line: "D7DFDA", bg: "F4F7F5", white: "FFFFFF", grey: "9AA59F", mark: "DDE7EF", hill1: "2A5C47", hill2: "3B7259", hill3: "4E8A6C" };
 const THEME = { name: "Wakaho", headFontFace: FONT, bodyFontFace: FONT, colors: { dk1: K.ink, lt1: K.white, dk2: K.navy, lt2: K.bg, accent1: K.teal, accent2: K.amber, accent3: K.navy, accent4: "6FA8C0", accent5: K.grey, accent6: "B5543A", hlink: K.teal, folHlink: "6B4E9B" } };
@@ -51,6 +52,7 @@ const hills = (s) => {
   s.addShape(pres.shapes.OVAL, { x: 2.0, y: 6.6, w: 8.0, h: 3.0, fill: { color: K.hill3 }, line: { type: "none" } });
 };
 const divider = (n, name, desc) => {
+  if (SHORT) return;
   const s = pres.addSlide({ masterName: "COVER" });
   hills(s);
   T(s, n, { x: 0.9, y: 1.2, w: 3, h: 1.6, fontSize: 96, bold: true, color: K.amber });
@@ -636,8 +638,8 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     }
   }
 
-  // 17 一緒に考えたいこと
-  {
+  // 17 一緒に考えたいこと（短縮版では外す。同じ問いが意見用紙にある）
+  if (!SHORT) {
     const s = pres.addSlide({ masterName: "DARK" });
     s.addText("皆さんと一緒に考えたいこと", { placeholder: "title" });
     const q = ["子どもたちに、どんな学びを経験してほしいですか？", "今の学校の良さで、残したいものは何ですか？", "通学・安全・地域活動で心配なことは何ですか？", "判断の前に、どんな情報が必要ですか？"];
@@ -706,15 +708,27 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     ["特別支援学級", "障がいのある子どものために、小中学校の中に置かれる少人数の学級。"], ["通級", "ふだんの学級に在籍しながら、一部の時間だけ別の教室で支援を受ける仕組み。"],
     ["指定緊急避難場所", "災害が迫ったときに、命を守るために逃げる場所。災害の種類ごとに指定されます。"], ["指定避難所", "災害で家に戻れない人が、しばらく過ごすために市が指定した施設。"],
     ["長寿命化計画", "建物を計画的に改修して、長く使うための市の計画。"], ["放課後児童クラブ", "保護者が働いている家庭などの小学生が、放課後を過ごす場。"]];
-  for (let k = 0; k < 2; k++) {
-    const s = content(`用語の説明（${k + 1}/2）`);
-    terms.slice(k * 8, k * 8 + 8).forEach(([h, d], i) => {
-      const x = 0.6 + (i % 2) * 6.15, y = 1.4 + Math.floor(i / 2) * 1.22;
-      box(s, x, y, 5.95, 1.1, i % 4 < 2 ? K.bg : K.white, i % 4 < 2 ? null : K.line);
-      T(s, h, { x: x + 0.2, y, w: 2.0, h: 1.1, fontSize: 17, bold: true, color: K.navy, valign: "middle" });
-      T(s, d, { x: x + 2.25, y, w: 3.55, h: 1.1, fontSize: 16, valign: "middle" });
+  if (SHORT) {
+    // 短縮版：14語を1枚に
+    const s = content("用語の説明");
+    terms.forEach(([h, d], i) => {
+      const x = 0.6 + (i % 2) * 6.15, y = 1.3 + Math.floor(i / 2) * 0.72;
+      box(s, x, y, 5.95, 0.66, Math.floor(i / 2) % 2 ? K.white : K.bg, Math.floor(i / 2) % 2 ? K.line : null);
+      T(s, h, { x: x + 0.15, y, w: 1.95, h: 0.66, fontSize: 15, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: x + 2.15, y, w: 3.7, h: 0.66, fontSize: 14, valign: "middle" });
     });
     note(s, "年の表し方：令和の年に2018を足すと西暦になります（令和8年度＝2026年度、令和14年度＝2032年度、令和20年度＝2038年度）。", 6.4);
+  } else {
+  for (let k = 0; k < 2; k++) {
+      const s = content(`用語の説明（${k + 1}/2）`);
+      terms.slice(k * 8, k * 8 + 8).forEach(([h, d], i) => {
+        const x = 0.6 + (i % 2) * 6.15, y = 1.4 + Math.floor(i / 2) * 1.22;
+        box(s, x, y, 5.95, 1.1, i % 4 < 2 ? K.bg : K.white, i % 4 < 2 ? null : K.line);
+        T(s, h, { x: x + 0.2, y, w: 2.0, h: 1.1, fontSize: 17, bold: true, color: K.navy, valign: "middle" });
+        T(s, d, { x: x + 2.25, y, w: 3.55, h: 1.1, fontSize: 16, valign: "middle" });
+      });
+      note(s, "年の表し方：令和の年に2018を足すと西暦になります（令和8年度＝2026年度、令和14年度＝2032年度、令和20年度＝2038年度）。", 6.4);
+    }
   }
   }
 
