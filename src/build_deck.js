@@ -405,7 +405,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   // 追加A 学校間の距離
   {
     const s = content("学校と学校の距離・移動時間の目安", "各小学校の間、各小学校と若穂中の間（地図は位置関係を示す概略図）");
-    box(s, 0.6, 1.6, 6.1, 5.0, K.bg);
+    box(s, 0.6, 1.6, 6.1, 4.82, K.bg);
     const P = { 綿内小: [36.622361, 138.262529], 川田小: [36.604091, 138.241565], 保科小: [36.5874875, 138.2655742], 若穂中: [36.604752, 138.251224] };
     const sc = 1.1, cx = 4.05, cy = 4.1, la0 = 36.6049, lo0 = 138.2536;
     const XY = n => [cx + (P[n][1] - lo0) * 89.4 * sc, cy - (P[n][0] - la0) * 111.0 * sc];
@@ -426,9 +426,9 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       const left = n === "川田小";
       T(s, n, { x: left ? x - 1.45 : x + 0.28, y: y - 0.2, w: 1.15, h: 0.4, fontSize: 16, bold: true, color: K.navy, valign: "middle", align: left ? "right" : "left" });
     });
-    s.addShape(pres.shapes.LINE, { x: 0.9, y: 6.3, w: 1.1, h: 0, line: { color: K.sub, width: 2 } });
-    T(s, "1km", { x: 2.08, y: 6.15, w: 0.6, h: 0.3, fontSize: 13, color: K.sub });
-    T(s, "↑ 北", { x: 2.9, y: 6.15, w: 0.7, h: 0.3, fontSize: 13, bold: true, color: K.sub });
+    s.addShape(pres.shapes.LINE, { x: 0.9, y: 6.17, w: 1.1, h: 0, line: { color: K.sub, width: 2 } });
+    T(s, "1km", { x: 2.08, y: 6.02, w: 0.6, h: 0.3, fontSize: 13, color: K.sub });
+    T(s, "↑ 北", { x: 2.9, y: 6.02, w: 0.7, h: 0.3, fontSize: 13, bold: true, color: K.sub });
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 1.9, w: 0.45, h: 0, line: { color: K.teal, width: 2.5 } });
     T(s, "小学校どうし", { x: 1.42, y: 1.75, w: 1.8, h: 0.3, fontSize: 13, color: K.sub });
     s.addShape(pres.shapes.LINE, { x: 0.9, y: 2.2, w: 0.45, h: 0, line: { color: K.amber, width: 2.5, dashType: "dash" } });
@@ -443,10 +443,10 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       [H("道のり"), H("時間"), H("道のり"), H("時間")]];
     legRows.forEach((r, i) => rows.push([String(i + 1), r[0], `${r[1]}km`, r[2], `${r[3]}km`, r[4]].map((t, j) => ({ text: t, options: { align: j === 1 ? "left" : "center", bold: j < 2 || j === 3, color: j === 0 ? (i < 3 ? K.teal : K.amber) : K.ink, fill: { color: i % 2 ? K.white : K.bg } } }))));
     s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.5, 1.8, 0.9, 0.8, 0.9, 0.9], rowH: [0.38, 0.38, 0.46, 0.46, 0.46, 0.46, 0.46, 0.46], fontSize: 14, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    box(s, 6.9, 5.25, 5.8, 0.68, K.tealL);
-    T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.25, w: 5.4, h: 0.68, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
-    box(s, 6.9, 6.0, 5.8, 0.62, K.amberL);
-    T(s, "学校と学校の距離で、子どもの通学距離ではありません。徒歩は大人の速さの目安で、子どもはもっとかかります。", { x: 7.1, y: 6.0, w: 5.4, h: 0.62, fontSize: 12, color: "A3402C", valign: "middle" });
+    box(s, 6.9, 5.2, 5.8, 0.62, K.tealL);
+    T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.2, w: 5.4, h: 0.62, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
+    box(s, 6.9, 5.88, 5.8, 0.54, K.amberL);
+    T(s, "学校と学校の距離で、子どもの通学距離ではありません。徒歩は大人の速さの目安で、子どもはもっとかかります。", { x: 7.1, y: 5.88, w: 5.4, h: 0.54, fontSize: 12, color: "A3402C", valign: "middle" });
     note(s, "Google マップの経路検索（令和8年（2026年）10月27日夜）。2・3・6は保科小へ向かう上りの時間。国の目安：文部科学省の手引（平成27年＝2015年）。", 6.62);
     s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。道のりと時間はGoogle マップの経路検索（2026年10月27日の夜）。保科小が入る区間（2・3・6）は、保科小へ向かう上りの向きの時間（川田小→保科小46分、逆の下りは36分）。徒歩は大人の速さ、車は夜の交通量での値で、朝の通学時間帯は長くなることがある。保科小へ向かう徒歩は約100mの上り（若穂中→保科小 上り102m、綿内小→保科小 上り113m、保科小→川田小 下り104m）。各家庭からの距離と子どもの歩く速さでの実測は、事務局に依頼する。");
   }
