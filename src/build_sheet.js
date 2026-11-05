@@ -61,4 +61,4 @@ const footer = (s, text) => {
   footer(s, "書いた紙は、［先生・回収箱］にわたしてください。名前は書かなくてよいです。\nみなさんの考えは、これからの学校を考える大人たちが、ぜんぶ読みます。");
 }
 
-pres.writeFile({ fileName: OUT }).then(() => require("./fix_fonts")(OUT, FONT)).then(() => console.log("ok"));
+pres.writeFile({ fileName: OUT }).then(() => require("./fix_fonts")(OUT, FONT)).then(() => require("./resave")(OUT)).then(() => console.log("ok"));

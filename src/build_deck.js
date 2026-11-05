@@ -744,5 +744,6 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   await pres.writeFile({ fileName: OUT });
   if (applyTheme) await applyTheme(OUT, THEME);
   await require("./fix_fonts")(OUT, FONT);
+  require("./resave")(OUT);
   console.log("ok");
 })();

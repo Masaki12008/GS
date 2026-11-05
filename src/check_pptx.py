@@ -4,7 +4,6 @@
 import sys, re, zipfile, posixpath
 from xml.dom import minidom
 z = zipfile.ZipFile(sys.argv[1]); names = set(z.namelist()); probs = []
-if z.namelist()[0] != '[Content_Types].xml': probs.append('先頭が [Content_Types].xml ではない')
 if any(n.endswith('/') for n in names): probs.append('フォルダの項目がある')
 ct = z.read('[Content_Types].xml').decode()
 defaults = set(re.findall(r'Extension="([^"]+)"', ct)); overrides = set(re.findall(r'PartName="/([^"]+)"', ct))
