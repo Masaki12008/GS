@@ -8,6 +8,7 @@
 const fs = require("fs");
 const JSZip = require("jszip");
 module.exports = async function fixFonts(file, font = "BIZ UDPゴシック") {
+  if (process.env.RAW === "1") return; // 確認用：仕上げの処理をしない
   const src = await JSZip.loadAsync(fs.readFileSync(file));
   const names = Object.keys(src.files).filter(n => !src.files[n].dir);
   names.sort((a, b) => (b === "[Content_Types].xml") - (a === "[Content_Types].xml"));
@@ -17,9 +18,14 @@ module.exports = async function fixFonts(file, font = "BIZ UDPゴシック") {
     if (name === "[Content_Types].xml") {
       data = Buffer.from(data.toString("utf8").replace(/<Override PartName="\/([^"]+)"[^>]*\/>/g, (m, part) => (names.includes(part) ? m : "")), "utf8");
     }
-    if (/^ppt\/(slides|slideLayouts|slideMasters|notesSlides|notesMasters)\/[^/]+\.xml$/.test(name)) {
+    if (/^ppt\/(slides|slideLayouts|slideMasters|notesSlides|notesMasters|charts)\/[^/]+\.xml$/.test(name)) {
       let id = 1;
-      data = Buffer.from(data.toString("utf8").replace(/<p:cNvPr id="\d+"/g, () => `<p:cNvPr id="${id++}"`), "utf8");
+      data = Buffer.from(data.toString("utf8")
+        .replace(/<p:cNvPr id="\d+"/g, () => `<p:cNvPr id="${id++}"`)
+        // 言語を日本語に。日本語用の書体の文字コードを中国語（-122）から日本語（-128）に。cs（アラビア語などの書体）は外す
+        .replace(/lang="en-US"/g, 'lang="ja-JP"')
+        .replace(/(<a:ea typeface="[^"]*"[^>]*?)charset="-122"/g, '$1charset="-128"')
+        .replace(/<a:cs typeface="[^"]*"[^>]*\/>/g, ""), "utf8");
     }
     if (/^ppt\/theme\/theme\d+\.xml$/.test(name)) {
       data = Buffer.from(data.toString("utf8").replace(/<a:(latin|ea|cs) typeface="[^"]*"/g, (m, t) => `<a:${t} typeface="${font}"`), "utf8");
