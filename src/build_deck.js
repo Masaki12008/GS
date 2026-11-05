@@ -153,32 +153,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   }
 
   divider("01", "現状を知る", "児童生徒数と、これからの見通し"); SEC = "01  現状を知る";
-  // 4 児童数の見通し
-  {
-    const s = content("若穂地区の3小学校｜児童数の見通し", "令和8年度（2026年度）→ 令和14年度（2032年度）　教育委員会の推計");
-    s.addChart(pres.charts.BAR, [
-      { name: "令和8年度（2026）", labels: Object.keys(sch), values: Object.values(sch).map(a => a[0]) },
-      { name: "令和14年度（2032）", labels: Object.keys(sch), values: Object.values(sch).map(a => a[6]) },
-    ], Object.assign({}, chartBase, {
-      x: 0.5, y: 1.95, w: 7.6, h: 4.5, barDir: "bar", chartColors: [K.grey, K.teal], barGapWidthPct: 60, barOverlapPct: -10,
-      catAxisOrientation: "maxMin", valAxisHidden: true, valGridLine: { style: "none" }, valAxisMinVal: 0, valAxisMaxVal: 320,
-      showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 14, dataLabelColor: K.ink, dataLabelFormatCode: '0"人"',
-      catAxisLabelFontSize: 18, catAxisLabelColor: K.ink, showLegend: false,
-    }));
-    [["令和8年度（2026）", K.grey], ["令和14年度（2032）", K.teal]].forEach(([t, c], i) => {
-      s.addShape(pres.shapes.RECTANGLE, { x: 1.9 + i * 3.0, y: 1.62, w: 0.3, h: 0.25, fill: { color: c }, line: { type: "none" } });
-      T(s, t, { x: 2.3 + i * 3.0, y: 1.57, w: 2.6, h: 0.35, fontSize: 16, color: K.ink, valign: "middle" });
-    });
-    const rows = Object.entries(sch);
-    rows.forEach(([n, a], i) => {
-      const y = 1.75 + i * 1.55;
-      box(s, 8.5, y, 4.2, 1.35, K.bg);
-      T(s, n, { x: 8.8, y: y + 0.18, w: 1.6, h: 0.5, fontSize: 19, bold: true, color: K.navy, valign: "middle" });
-      T(s, `−${dec(a[0], a[6])}%`, { x: 10.4, y: y + 0.12, w: 2.1, h: 0.6, fontSize: 30, bold: true, color: K.teal, align: "right", valign: "middle" });
-      T(s, `${a[0]}人 → ${a[6]}人（${a[0] - a[6]}人減）`, { x: 8.8, y: y + 0.8, w: 3.7, h: 0.4, fontSize: 16, color: K.sub });
-    });
-    note(s, "出典：提供資料「児童数推計」（令和8年（2026年）5月1日現在）。将来推計は変動します。");
-  }
+  // （児童数の見通しの棒グラフのページは、次の「合計」のページと重なるため外した。2026-11-05）
 
   // 5 合計
   {
