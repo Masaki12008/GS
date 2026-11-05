@@ -435,19 +435,20 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     T(s, "小学校と若穂中", { x: 1.42, y: 2.05, w: 1.8, h: 0.3, fontSize: 13, color: K.sub });
     const H = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center" } });
     T(s, "保科小は、ほかの3校より\n約100m高い所にあります", { x: 0.9, y: 2.45, w: 3.0, h: 0.65, fontSize: 14, color: K.sub });
-    // 道のり・時間：Google マップの経路検索（2026-10-27、input/maps/）。[区間, 徒歩km, 徒歩分, 車km, 車分]
-    const legRows = [["綿内小 ⇔ 川田小", "3.2", "44分", "3.5", "6分"], ["川田小 ⇔ 保科小", "3.0", "46分", "3.2", "5分"], ["綿内小 ⇔ 保科小", "4.9", "72分", "5.6", "8分"],
-      ["綿内小 ⇔ 若穂中", "2.5", "33分", "2.9", "5分"], ["川田小 ⇔ 若穂中", "1.1", "16分", "1.2", "3分"], ["保科小 ⇔ 若穂中", "2.5", "39分", "2.5", "4分"]];
+    // 徒歩：Google マップの経路検索（2026-10-27、input/maps/01〜）。車：平日 2026-11-06 朝8:00出発の検索（input/maps/20〜、両方向）。
+    // 車の時間は両方向で違うときは「短い〜長い」。[区間, 徒歩km, 徒歩分, 車km, 車分]
+    const legRows = [["綿内小 ⇔ 川田小", "3.2", "44分", "3.7", "7〜8分"], ["川田小 ⇔ 保科小", "3.0", "46分", "3.2", "6分"], ["綿内小 ⇔ 保科小", "4.9", "72分", "5.8", "10〜12分"],
+      ["綿内小 ⇔ 若穂中", "2.5", "33分", "3.0", "6分"], ["川田小 ⇔ 若穂中", "1.1", "16分", "1.2", "4分"], ["保科小 ⇔ 若穂中", "2.5", "39分", "2.5", "5〜6分"]];
     const rows = [[Object.assign(H("No"), { options: Object.assign(H("").options, { rowspan: 2 }) }), Object.assign(H("区間"), { options: Object.assign(H("").options, { rowspan: 2 }) }),
       Object.assign(H("徒歩"), { options: Object.assign(H("").options, { colspan: 2 }) }), Object.assign(H("車"), { options: Object.assign(H("").options, { colspan: 2 }) })],
       [H("道のり"), H("時間"), H("道のり"), H("時間")]];
     legRows.forEach((r, i) => rows.push([String(i + 1), r[0], `${r[1]}km`, r[2], `${r[3]}km`, r[4]].map((t, j) => ({ text: t, options: { align: j === 1 ? "left" : "center", bold: j < 2 || j === 3, color: j === 0 ? (i < 3 ? K.teal : K.amber) : K.ink, fill: { color: i % 2 ? K.white : K.bg } } }))));
-    s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.5, 1.8, 0.9, 0.8, 0.9, 0.9], rowH: [0.38, 0.38, 0.46, 0.46, 0.46, 0.46, 0.46, 0.46], fontSize: 14, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
+    s.addTable(rows, { x: 6.9, y: 1.6, w: 5.8, colW: [0.4, 1.75, 0.8, 0.75, 0.8, 1.3], rowH: [0.38, 0.38, 0.46, 0.46, 0.46, 0.46, 0.46, 0.46], fontSize: 13, margin: 0.04, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
     box(s, 6.9, 5.2, 5.8, 0.62, K.tealL);
     T(s, "国の目安：通学距離は小学校おおむね4km以内・中学校おおむね6km以内、通学時間はおおむね1時間以内", { x: 7.1, y: 5.2, w: 5.4, h: 0.62, fontSize: 13, bold: true, color: K.navy, valign: "middle" });
     box(s, 6.9, 5.88, 5.8, 0.54, K.amberL);
     T(s, "学校と学校の距離で、子どもの通学距離ではありません。徒歩は大人の速さの目安で、子どもはもっとかかります。", { x: 7.1, y: 5.88, w: 5.4, h: 0.54, fontSize: 12, color: "A3402C", valign: "middle" });
-    note(s, "Google マップの経路検索（令和8年（2026年）10月27日夜）。2・3・6は保科小へ向かう上りの時間。国の目安：文部科学省の手引（平成27年＝2015年）。", 6.62);
+    note(s, "Google マップの経路検索。徒歩は令和8年（2026年）10月27日、2・3・6は保科小へ向かう上りの時間。車は令和8年（2026年）11月6日（平日）朝8時出発、両方向で違う所は幅で表示。国の目安：文部科学省の手引（平成27年＝2015年）。", 6.62);
     s.addNotes("学校間の距離であり、各家庭からの通学距離ではないことを必ず口頭で伝える。道のりと時間はGoogle マップの経路検索（2026年10月27日の夜）。保科小が入る区間（2・3・6）は、保科小へ向かう上りの向きの時間（川田小→保科小46分、逆の下りは36分）。徒歩は大人の速さ、車は夜の交通量での値で、朝の通学時間帯は長くなることがある。保科小へ向かう徒歩は約100mの上り（若穂中→保科小 上り102m、綿内小→保科小 上り113m、保科小→川田小 下り104m）。各家庭からの距離と子どもの歩く速さでの実測は、事務局に依頼する。");
   }
 
