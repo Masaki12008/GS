@@ -53,7 +53,8 @@
 - **PDFを作る前に BIZ UDPゴシックを入れる**（ない環境では別の書体に置き換わり、字の幅が変わる）。Google Fonts の配布元（OFLライセンス）から入れる：
   `mkdir -p ~/.fonts && for f in BIZUDPGothic-Regular BIZUDPGothic-Bold; do curl -sSL -o ~/.fonts/$f.ttf https://raw.githubusercontent.com/google/fonts/main/ofl/bizudpgothic/$f.ttf; done && fc-cache -f`
   確認は `pdffonts output/若穂地区_住民説明会資料.pdf`（BIZUDPGothic だけになっていればよい）。
-- `src/fix_fonts.js`：pptx のテーマの日本語用の書体（a:ea）が空だと別の書体に置き換わるため、ビルドの最後にテーマの書体を BIZ UDPゴシック にそろえている（build_deck.js・build_sheet.js から呼ぶ）。書き戻すときは `[Content_Types].xml` を先頭にし、フォルダだけの項目を入れない（守らないと iPhone版 PowerPoint で「ファイルを開けません」になる。2026-11-05 に修正）。
+- `src/fix_fonts.js`：pptx のテーマの日本語用の書体（a:ea）が空だと別の書体に置き換わるため、ビルドの最後にテーマの書体を BIZ UDPゴシック にそろえている（build_deck.js・build_sheet.js から呼ぶ）。書き戻すときは `[Content_Types].xml` を先頭にし、フォルダだけの項目を入れない（守らないと iPhone版 PowerPoint で「ファイルを開けません」になる。2026-11-05 に修正）。あわせて pptxgenjs の出力の不備（[Content_Types].xml に実在しない slideMaster2〜 が登録される、同じスライドで図形の番号 p:cNvPr id が重なる）も直している。
+- **pptx の作りの確認**：`python3 src/check_pptx.py output/若穂地区_住民説明会資料.pptx`（「問題なし」になればよい）。
 - 地図（`src/tsugaku/map.py`）も、~/.fonts に BIZ UDPゴシック があればそれを使う。
 - **PowerPointでの文字の重なりの確認**：`python3 src/check_overflow.py output/若穂地区_住民説明会資料.pptx`（`pip install python-pptx fonttools`）。BIZ UDPゴシックの字幅で折り返しを計算し、枠の高さに収まらない文（PowerPointで下の文字に重なる）を一覧にする。ページ番号と、大きな数字に小さな「人」を付けた所（P6）は、計算上の誤検出なので無視してよい。注記（`note`）は行数から高さを決め、ページ下の行に重ならない位置まで自動で上げる。
 

@@ -1,5 +1,8 @@
 // pptx のテーマで、日本語用の書体（a:ea）が空のままだと、見る環境によって別の書体に置き換わる。
 // テーマの latin / ea / cs をすべて BIZ UDPゴシック にそろえる。
+// あわせて、pptxgenjs の出力の不備を直す（どちらも iPhone版 PowerPoint で開けなくなる原因になる）：
+//  - [Content_Types].xml に、実際にはない部品（slideMaster2〜）が登録されている → 登録を消す
+//  - 同じスライドの中で図形の番号（p:cNvPr の id）が重なる → スライドごとに付け直す
 // 書き戻すときは、元のファイルの並び順を保ち（[Content_Types].xml が先頭）、
 // フォルダだけの項目を入れない。これを守らないと iPhone版 PowerPoint で「ファイルを開けません」になる。
 const fs = require("fs");
@@ -11,6 +14,13 @@ module.exports = async function fixFonts(file, font = "BIZ UDPゴシック") {
   const out = new JSZip();
   for (const name of names) {
     let data = await src.file(name).async("nodebuffer");
+    if (name === "[Content_Types].xml") {
+      data = Buffer.from(data.toString("utf8").replace(/<Override PartName="\/([^"]+)"[^>]*\/>/g, (m, part) => (names.includes(part) ? m : "")), "utf8");
+    }
+    if (/^ppt\/(slides|slideLayouts|slideMasters|notesSlides|notesMasters)\/[^/]+\.xml$/.test(name)) {
+      let id = 1;
+      data = Buffer.from(data.toString("utf8").replace(/<p:cNvPr id="\d+"/g, () => `<p:cNvPr id="${id++}"`), "utf8");
+    }
     if (/^ppt\/theme\/theme\d+\.xml$/.test(name)) {
       data = Buffer.from(data.toString("utf8").replace(/<a:(latin|ea|cs) typeface="[^"]*"/g, (m, t) => `<a:${t} typeface="${font}"`), "utf8");
     }
