@@ -239,29 +239,20 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
 
   // 追加C 望ましい学校規模
   {
-    const s = content("望ましい学校規模の目安と、若穂の見通し", "市の審議のまとめ（平成30年＝2018年）で示された目安に、推計を当てはめると");
-    const crit = [["国の標準", "12〜18学級", "小学校・中学校とも（学校教育法施行規則）"], ["長野県の目安", "学年に複数の学級\n学年20人程度", "クラス替えができ、一定の集団で学べる規模"]];
+    const s = content("望ましい学校規模の目安", "市の審議のまとめ（平成30年＝2018年）で示された目安");
+    // 2026-11-17 指示：「学年20人程度」と、20人未満の学年の数の表を削除
+    const crit = [["国の標準", "12〜18学級", "学校全体のクラスの数\n（小学校なら1学年2〜3クラス）。\n小学校・中学校とも（学校教育法施行規則）"], ["長野県の目安", "学年に複数の学級", "クラス替えができ、一定の集団で学べる規模"]];
     crit.forEach(([h, v, d], i) => {
-      const y = 1.65 + i * 2.15;
-      box(s, 0.6, y, 4.9, 2.0, K.tealL);
-      T(s, h, { x: 0.9, y: y + 0.18, w: 4.3, h: 0.4, fontSize: 17, bold: true, color: K.teal });
-      T(s, v, { x: 0.9, y: y + 0.55, w: 4.3, h: 0.95, fontSize: 22, bold: true, color: K.navy, valign: "middle" });
-      T(s, d, { x: 0.9, y: y + 1.55, w: 4.3, h: 0.32, fontSize: 14, color: K.sub });
+      const x = 0.6 + i * 6.15;
+      box(s, x, 1.7, 5.95, 3.0, K.tealL);
+      T(s, h, { x: x + 0.35, y: 1.9, w: 5.3, h: 0.45, fontSize: 19, bold: true, color: K.teal });
+      T(s, v, { x: x + 0.35, y: 2.5, w: 5.3, h: 0.9, fontSize: 30, bold: true, color: K.navy, valign: "middle" });
+      T(s, d, { x: x + 0.35, y: 3.55, w: 5.3, h: 0.95, fontSize: 16, color: K.sub });
     });
-    const H = t => ({ text: t, options: { bold: true, color: K.white, fill: { color: K.navy }, align: "center" } });
-    const under = (n, i) => Object.entries(grades[n]).filter(([g]) => g !== "合計").filter(([, v]) => v[i] < 20).length;
-    const nG = n => Object.keys(grades[n]).length - 1;
-    const rows = [[H("学校"), H("R8（2026）"), H("R14（2032）")]];
-    ["綿内小", "川田小", "保科小", "若穂中"].forEach((n, i) => {
-      const o = { fill: { color: i % 2 ? K.white : K.bg }, align: "center" };
-      rows.push([{ text: n, options: Object.assign({}, o, { bold: true, align: "left" }) }, ...[0, 6].map(j => ({ text: `${under(n, j)} / ${nG(n)}学年`, options: o }))]);
-    });
-    T(s, "学年の人数が20人未満になる学年の数", { x: 5.9, y: 1.7, w: 6.8, h: 0.45, fontSize: 18, bold: true, color: K.navy });
-    s.addTable(rows, { x: 5.9, y: 2.25, w: 6.8, colW: [2.0, 2.4, 2.4], rowH: [0.6, 0.62, 0.62, 0.62, 0.62], fontSize: 17, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    T(s, "学級の数は、学級の人数の基準によって変わります。\n各校の学級数の見通しは［事務局に確認中］。", { x: 5.9, y: 5.45, w: 6.8, h: 0.6, fontSize: 15, color: K.sub });
+    T(s, "学級の数は、学級の人数の基準によって変わります。各校の学級数の見通しは［事務局に確認中］。", { x: 0.6, y: 5.0, w: 12.1, h: 0.5, fontSize: 16, color: K.sub });
     box(s, 0.6, 6.0, 12.1, 0.5, K.bg);
     T(s, "目安を下回ることが、そのまま再編の理由にはなりません。施設の状況や各校の良さなども合わせて比べます。", { x: 0.8, y: 6.0, w: 11.7, h: 0.5, fontSize: 15, bold: true, color: K.navy, valign: "middle" });
-    note(s, "出典：長野市「少子化に対応した子どもにとって望ましい教育環境の在り方について（審議のまとめ）」（平成30年＝2018年）、推計（令和8年（2026年）5月1日現在）", 6.62);
+    note(s, "出典：長野市「少子化に対応した子どもにとって望ましい教育環境の在り方について（審議のまとめ）」（平成30年＝2018年）", 6.62);
     s.addNotes("目安を満たさないことが、ただちに再編の理由になるわけではないことを口頭で補足する。");
   }
 
@@ -299,9 +290,8 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: X(b0), y: y + 0.1, w: X(2026) - X(b0), h: 0.3, fill: { color: K.hill3 }, line: { type: "none" }, rectRadius: 0.15 });
       T(s, `${b0}〜${b1}年度（${WA(b0)}〜${WA(b1)}年度）に建てた${cnt}棟`, { x: X(b0) + 0.1, y: y + 0.1, w: 7.0, h: 0.3, fontSize: 13, bold: true, color: K.white, valign: "middle" });
       s.addShape(pres.shapes.DIAMOND, { x: X(p) - 0.14, y: y + 0.11, w: 0.28, h: 0.28, fill: { color: K.amber }, line: { color: K.white, width: 1 } });
-      T(s, `${p}年度（R${p - 2018}）から${k}の対象（${WA(bb)}＝${bb}年度の棟で計算）`, { x: Math.min(X(p) + 0.15, X(2026) - 0.1) - 8.6, y: y + 0.45, w: 8.6, h: 0.3, fontSize: 13, color: "A3402C", bold: true, align: "right" });
     });
-    note(s, "◆計画期間（R3〜R12＝2021〜2030年度）中に対象に入る時期の目安で、工事の予定ではありません（市の資料、R2＝2020年4月時点）。\n各校1つの棟で計算（旧耐震は築50年で「更新」、新耐震は築20・40年で「改修」）。「更新」が建て替えか改修かは［市に確認中］。\n4校とも全棟が長寿命化に適する判定。R8（2026）年度、綿内小・川田小の北校舎と保科小の南校舎のトイレ改修を入札公告。", 6.1);
+    note(s, "◆計画期間（R3〜R12＝2021〜2030年度）中に対象に入る時期の目安で、工事の予定ではありません（市の資料、R2＝2020年4月時点）。\n各校1つの棟で計算。「更新」が建て替えか改修かは［市に確認中］。\n4校とも全棟が長寿命化に適する判定。R8（2026）年度、綿内小・川田小の北校舎と保科小の南校舎のトイレ改修を実施。", 6.1);
     s.addNotes("年度は、計画の期間中に対象に入る目安を機械的に書いたもので、工事の予定ではない。旧耐震か新耐震かで、市内のどの学校も同じ書き方になっている（学校ごとに判断したものではない）。保科小は2010年度の棟（体育館の年度と同じ）で計算されているが、校舎は1977〜1999年度。どの棟で計算したかは市に確認中。出典：長野市学校施設長寿命化計画（令和3年（2021年）2月策定・令和5年（2023年）6月改訂）本文の施設一覧と添付資料。");
   }
 
@@ -309,7 +299,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("長野市の計画に書かれていること", "長野市学校施設長寿命化計画（R3＝2021年策定・R5＝2023年改訂）から。若穂について決めたものではありません");
     const cols = [["建物の使い方", "MdApartment", [["建設から40年後に\n長寿命化改修", "その後40年程度使えるようにする（建て替えより費用を抑える）"], ["改修に適さない建物は建て替え", "改修の前に、建物の強さを\n調べて判断する"]]],
-      ["市全体の学校の費用", "MdPayments", [["年平均58億円の見込み\n（R8＝2026年度以降）", "R5〜R7（2023〜25）年度の\n年30.4億円より、\n年約28億円多い"], ["「施設総量について\n今後20年間で20％縮減」", "学校に限らない、市の公共施設全体の目標（総合管理計画）"]]],
+      ["市全体の学校の費用", "MdPayments", [["年平均の事業費37億円\n（R5〜7＝2023〜25年度）", "労務費や光熱水費の高騰、資材不足等\nにより工事費は年々高騰の傾向。\n今後更なる高騰が見込まれ、工事方法\nや工事対象の見直しが迫られている状況"], ["「施設総量について\n今後20年間で20％縮減」", "学校に限らない、市の公共施設全体の目標（総合管理計画）"]]],
       ["学校の配置の考え方", "MdGroups", [["「統廃合も見据えて\n適正配置について検討」", "各学校区の人口の動きを\n見極めながら"], ["「地域に学校を残したいという\n地域の思いも受け止め」", "例：小学校の低・中学年は地域で、\n高学年以上は大きな学校で\n学ぶ形の検討"]]]];
     for (let i = 0; i < 3; i++) {
       const [h, ic, items] = cols[i], x = 0.6 + i * 4.1;
@@ -317,9 +307,9 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       await iconCircle(s, x + 0.3, 1.8, 0.7, ic);
       T(s, h, { x: x + 1.15, y: 1.8, w: 2.65, h: 0.7, fontSize: 20, bold: true, color: K.navy, valign: "middle" });
       items.forEach(([a, b], j) => {
-        const y = 2.75 + j * 1.7;
-        T(s, a, { x: x + 0.3, y, w: 3.4, h: 0.75, fontSize: 17, bold: true, color: K.teal });
-        T(s, b, { x: x + 0.3, y: y + 0.78, w: 3.4, h: 0.8, fontSize: 15, color: K.ink });
+        const long = i === 1 && j === 0, y = 2.75 + j * (i === 1 ? 1.95 : 1.7);
+        T(s, a, { x: x + 0.3, y, w: 3.45, h: 0.75, fontSize: long ? 16 : 17, bold: true, color: K.teal });
+        T(s, b, { x: x + 0.3, y: y + 0.8, w: 3.45, h: long ? 1.1 : 0.8, fontSize: long ? 13 : 15, color: K.ink });
       });
     }
     T(s, "市の方針も一つの前提として知ったうえで、若穂の子どもにとって何がよいかを、地域で考えます。", { x: 0.6, y: 6.3, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: K.sub, align: "center" });
@@ -523,7 +513,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   {
     const s = content("どの選択肢でも、生活への影響を見える化する");
     const v = [["通学", "各地区からの所要時間・スクールバスの要否・冬の安全対策", "MdDirectionsBus"], ["送迎", "保護者の送り迎えの負担、学校周辺の駐車と交通安全", "MdDirectionsCar"],
-      ["放課後", "放課後児童クラブ（※）・児童センターの場所と定員、帰り道", "MdChildFriendly"], ["地域クラブ", "中学生の放課後・休日の活動の場所と、そこまでの移動", "MdSportsBasketball"],
+      ["放課後", "子どもプラザ（※）・児童センターの場所と定員、帰り道", "MdChildFriendly"], ["地域クラブ", "中学生の放課後・休日の活動の場所と、そこまでの移動", "MdSportsBasketball"],
       ["学校生活", "行事、学級の人数、友だち関係", "MdSchool"], ["支援が必要な子", "特別支援学級・通級、医療的ケア、学校に行きづらい子の居場所", "MdAccessibility"],
       ["地域", "運動会や祭りなど地区の行事、防災拠点、交流の継続", "MdHome"], ["施設・費用", "校舎・跡地の使い方、整備費・運営費・保護者の負担", "MdDomain"]];
     for (let i = 0; i < v.length; i++) {
@@ -533,14 +523,14 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       T(s, h, { x: 1.5, y, w: 2.4, h: 0.57, fontSize: 18, bold: true, color: K.navy, valign: "middle" });
       T(s, d, { x: 3.9, y, w: 8.65, h: 0.57, fontSize: 17, valign: "middle" });
     }
-    note(s, "※放課後児童クラブ：保護者が働いている家庭などの小学生が、放課後を過ごす場。", 6.5);
+    note(s, "※子どもプラザ：小学校の校舎内など学校施設内にある放課後の「子どもの居場所」。", 6.5);
   }
 
   // 追加D どの案でもすぐ始められる学び
   {
     const s = content("どの選択肢でも、すぐに始められる学びの例", "結論を待たずに、3校と中学校で試せること");
     const ex = [["3校合同の授業・行事", "合同の体育・音楽、合同の遠足や\n宿泊学習など、大きな集団での活動", "MdGroups"], ["保育園から中学校までの連携", "保育園・幼稚園児の学校体験、\n中学校の先生による出前授業、\n小6の中学校体験", "MdSchool"],
-      ["オンラインの交流授業", "タブレットで3校の教室をつなぎ、\n一緒に話し合う授業", "MdComputer"], ["地域と一緒の学び", "地域の方を先生に迎える授業、\n地区の行事への参加", "MdHandshake"]];
+      ["オンラインの交流授業", "オンラインで3校の教室をつなぎ、\n一緒に話し合う授業", "MdComputer"], ["地域と一緒の学び", "地域の方を先生に迎える授業、\n地区の行事への参加", "MdHandshake"]];
     for (let i = 0; i < 4; i++) {
       const [h, d, ic] = ex[i], x = 0.6 + (i % 2) * 6.15, y = 1.7 + Math.floor(i / 2) * 2.25;
       box(s, x, y, 5.95, 2.05, K.bg);
@@ -575,7 +565,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       T(s, b, { x: x + 0.2, y: 3.65, w: W - 0.3, h: 0.85, fontSize: 13, color: K.sub });
     });
     T(s, "検討の結果が長野市に届くまで", { x: 0.6, y: 4.75, w: 6, h: 0.4, fontSize: 18, bold: true, color: K.navy });
-    const who = [["若穂地区小中学校再編検討委員会", "皆さんの意見をもとに、\n委員会としての方向性をまとめる"], ["若穂地区住民自治協議会", "委員会の方向性を受けて、\n長野市に答申する"], ["長野市", "答申を受けて、\n市が検討・判断する"]];
+    const who = [["若穂地区小中学校再編検討委員会", "皆さんの意見をもとに、\n委員会としての方向性をまとめる"], ["若穂地区住民自治協議会", "委員会の方向性を受けて、\n長野市に要望する"], ["長野市", "要望を受けて、\n市が検討・判断する"]];
     who.forEach(([h, d], i) => {
       const x = 0.6 + i * 4.1;
       box(s, x, 5.2, 3.75, 1.15, K.tealL);
@@ -583,7 +573,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       T(s, d, { x: x + 0.2, y: 5.67, w: 3.4, h: 0.65, fontSize: 15, color: K.ink });
       if (i < 2) s.addShape(pres.shapes.RIGHT_ARROW, { x: x + 3.8, y: 5.6, w: 0.25, h: 0.35, fill: { color: K.teal }, line: { type: "none" } });
     });
-    note(s, "R10（2028）年度以降は、検討の進み具合に応じて見直します。スケジュールは目標であり、正式決定ではありません。答申を受けた後の市の手続き・在校生への配慮の方針は［事務局に確認中］。", 6.5);
+    note(s, "R10（2028）年度以降は、検討の進み具合に応じて見直します。スケジュールは目標であり、正式決定ではありません。要望を受けた後の市の手続き・在校生への配慮の方針は［事務局に確認中］。", 6.5);
   }
 
   // 追加E 意見の出し方
@@ -647,11 +637,9 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     Object.entries(grades[n]).forEach(([g, v], i) => {
       const sum = g === "合計";
       rows.push([{ text: g, options: { bold: true, align: "center", fill: { color: sum ? K.tealL : (i % 2 ? K.white : K.bg) } } },
-        ...v.map(x => ({ text: String(x), options: { align: "center", bold: sum || x < 20, color: K.ink, fill: { color: sum ? K.tealL : (x < 20 ? K.mark : (i % 2 ? K.white : K.bg)) } } }))]);
+        ...v.map(x => ({ text: String(x), options: { align: "center", bold: sum, color: K.ink, fill: { color: sum ? K.tealL : (i % 2 ? K.white : K.bg) } } }))]);
     });
     s.addTable(rows, { x: 0.6, y: 1.6, w: 12.1, colW: [1.6, ...Y7.map(() => 1.5)], rowH: [0.7, ...Array(7).fill(0.56)], fontSize: 18, fontFace: FONT, color: K.ink, valign: "middle", border: { type: "solid", pt: 1, color: K.line } });
-    s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: 6.32, w: 0.3, h: 0.22, fill: { color: K.mark }, line: { color: K.line, width: 1 } });
-    T(s, "20人未満の学年（長野県の目安「学年20人程度」を下回る学年）", { x: 1.0, y: 6.28, w: 11, h: 0.3, fontSize: 14, color: K.sub });
     note(s, "出典：提供資料「児童数推計」（令和8年（2026年）5月1日現在、長野市教育委員会）。将来推計は変動します。", 6.65);
     if (n === "川田小") s.addNotes("R11の4年「25」は写真からの読み取り値で、斜めに続く数値（R10の3年22人）と合わない。原本と照合すること。");
   }
@@ -692,7 +680,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     ["義務教育学校", "小学校・中学校とは\n別の区分の学校。\n9年間を一つの学校で教える。"], ["中1ギャップ", "中学校に進んだときの環境の\n変化になじめず、\nつまずきやすくなること。"],
     ["特別支援学級", "障がいのある子どものために、\n小中学校の中に置かれる\n少人数の学級。"], ["通級", "ふだんの学級に在籍しながら、\n一部の時間だけ別の教室で\n支援を受ける仕組み。"],
     ["指定緊急避難場所", "災害が迫ったときに、命を\n守るために逃げる場所。\n災害の種類ごとに指定されます。"], ["指定避難所", "災害で家に戻れない人が、\nしばらく過ごすために\n市が指定した施設。"],
-    ["長寿命化計画", "建物を計画的に改修して、\n長く使うための市の計画。"], ["放課後児童クラブ", "保護者が働いている家庭などの\n小学生が、放課後を過ごす場。"]];
+    ["長寿命化計画", "建物を計画的に改修して、\n長く使うための市の計画。"], ["子どもプラザ", "小学校の校舎内など学校施設内に\nある、放課後の「子どもの居場所」。"]];
   if (SHORT) {
     // 短縮版：14語を1枚に
     const s = content("用語の説明");
