@@ -6,6 +6,7 @@
     "build:screen": "APPENDIX=0 NODE_PATH=node_modules node src/build_deck.js output/若穂地区_住民説明会資料_投影用.pptx",
     "build:handout": "SHORT=1 NODE_PATH=node_modules node src/build_deck.js output/若穂地区_住民説明会資料_配布用短縮版.pptx",
     "build:sheet": "node src/build_sheet.js output/意見用紙.pptx",
+    "build:survey": "node src/build_survey.js output/アンケート案.pptx",
     "build:brief": "NODE_PATH=node_modules node src/build_brief.js output/若穂地区_住民説明会資料_簡潔版.pptx"
   },
   "dependencies": {
