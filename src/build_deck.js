@@ -45,7 +45,7 @@ const sub = (s, text) => T(s, text, { x: 0.6, y: 1.12, w: 12.1, h: 0.4, fontSize
 const noteLines = text => text.split("\n").reduce((a, l) => a + Math.max(1, Math.ceil([...l].reduce((w, c) => w + (c.charCodeAt(0) < 0x2000 ? 0.55 : 1), 0) * 13 / (12.1 * 72 * 0.93))), 0);
 const note = (s, text, y = 6.55) => { const h = noteLines(text) * 13 * 1.25 / 72; T(s, text, { x: 0.6, y: Math.min(y, 6.98 - h), w: 12.1, h, fontSize: 13, color: K.sub }); };
 let SEC = "";
-// 目次（通常版のみ）。content() と divider() がページ番号を記録し、最後に目次のページへ書き込む
+// 目次（3つの版すべて）。content() と divider() がページ番号を記録し、最後に目次のページへ書き込む
 const TOC = [], TOCSEC = [];
 const TOCNAME = [["今日の説明会", "今日共有したいこと"], ["検討の出発点", "検討の出発点"], ["3小学校の児童数", "3小学校の児童数"], ["若穂中学校も", "若穂中学校の生徒数"],
   ["長野市全体と", "長野市全体との比較"], ["小規模校の良さ", "小規模校の良さと課題"], ["望ましい学校規模", "望ましい学校規模の目安"], ["なぜ今", "なぜ今、検討するのか"],
@@ -64,9 +64,9 @@ const hills = (s) => {
   s.addShape(pres.shapes.OVAL, { x: 2.0, y: 6.6, w: 8.0, h: 3.0, fill: { color: K.hill3 }, line: { type: "none" } });
 };
 const divider = (n, name, desc) => {
+  TOCSEC.push({ sec: n === "05" ? "参考資料" : `${n}  ${name}`, label: `${n}　${name}`, n: SHORT ? null : pres.slides.length + 1 });
   if (SHORT) return;
   const s = pres.addSlide({ masterName: "COVER" });
-  TOCSEC.push({ sec: n === "05" ? "参考資料" : `${n}  ${name}`, label: `${n}　${name}`, n: pres.slides.length });
   hills(s);
   T(s, n, { x: 0.9, y: 1.2, w: 3, h: 1.6, fontSize: 96, bold: true, color: K.amber });
   T(s, name, { x: 0.9, y: 2.95, w: 11, h: 1.0, fontSize: 48, bold: true, color: K.white });
@@ -130,9 +130,9 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     s.addNotes("表紙。日付は事務局の確定後に記入。委員会名・事務局名の表記は要確認。");
   }
 
-  // 目次（通常版＝配布用のみ。投影用・短縮版には入れない）
-  const tocSlide = (!SHORT && APPENDIX) ? content("目次") : null;
-  if (tocSlide) TOC.pop();
+  // 目次（通常版・投影用・短縮版のすべてに入れる）
+  const tocSlide = content("目次");
+  TOC.pop();
 
   SEC = "はじめに";
   // 2 今日の流れ
@@ -739,7 +739,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     cols.forEach((gi, c) => {
       const x = 0.6 + c * 4.09;
       let y = 1.3;
-      gi.forEach(i => {
+      gi.filter(i => groups[i]).forEach(i => {
         const g = groups[i];
         box(s, x, y, CW, RH, K.tealL);
         T(s, g.label, { x: x + 0.15, y, w: CW - 0.9, h: RH, fontSize: 17, bold: true, color: K.navy, valign: "middle" });
