@@ -28,14 +28,14 @@ pres.defineSlideMaster({
     { text: { text: FOOT, options: { x: 0.6, y: 7.05, w: 7, h: 0.25, fontSize: 10, color: K.grey, margin: 0 } } },
     { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 12.1, h: 0.7, fontSize: 30, bold: true, color: K.navy, valign: "middle", align: "left", margin: 0 }, text: "" } },
   ],
-  slideNumber: { x: 12.2, y: 7.0, w: 0.5, h: 0.3, fontSize: 10, color: K.grey, align: "right" },
+  slideNumber: { x: 11.7, y: 6.98, w: 1.0, h: 0.42, fontSize: 18, bold: true, color: K.sub, align: "right" },
 });
 pres.defineSlideMaster({
   title: "DARK", background: { color: K.navy },
   objects: [
     { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.5, w: 12.1, h: 0.8, fontSize: 32, bold: true, color: K.white, valign: "middle", align: "left", margin: 0 }, text: "" } },
   ],
-  slideNumber: { x: 12.2, y: 7.0, w: 0.5, h: 0.3, fontSize: 10, color: "9DB8AB", align: "right" },
+  slideNumber: { x: 11.7, y: 6.98, w: 1.0, h: 0.42, fontSize: 18, bold: true, color: "CFE0D6", align: "right" },
 });
 
 const T = (s, text, o) => s.addText(text, Object.assign({ isTextBox: true, margin: 0, fontSize: 16, color: K.ink, valign: "top", fontFace: FONT }, o));
