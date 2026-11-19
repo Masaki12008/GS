@@ -45,7 +45,17 @@ const sub = (s, text) => T(s, text, { x: 0.6, y: 1.12, w: 12.1, h: 0.4, fontSize
 const noteLines = text => text.split("\n").reduce((a, l) => a + Math.max(1, Math.ceil([...l].reduce((w, c) => w + (c.charCodeAt(0) < 0x2000 ? 0.55 : 1), 0) * 13 / (12.1 * 72 * 0.93))), 0);
 const note = (s, text, y = 6.55) => { const h = noteLines(text) * 13 * 1.25 / 72; T(s, text, { x: 0.6, y: Math.min(y, 6.98 - h), w: 12.1, h, fontSize: 13, color: K.sub }); };
 let SEC = "";
-const content = (title, subtitle) => { const s = pres.addSlide({ masterName: "CONTENT" }); if (SEC) T(s, SEC, { x: 0.6, y: 0.2, w: 6, h: 0.3, fontSize: 14, bold: true, color: K.amber }); s.addText(title, { placeholder: "title" }); if (subtitle) sub(s, subtitle); return s; };
+// 目次（通常版のみ）。content() と divider() がページ番号を記録し、最後に目次のページへ書き込む
+const TOC = [], TOCSEC = [];
+const TOCNAME = [["今日の説明会", "今日共有したいこと"], ["検討の出発点", "検討の出発点"], ["3小学校の児童数", "3小学校の児童数"], ["若穂中学校も", "若穂中学校の生徒数"],
+  ["長野市全体と", "長野市全体との比較"], ["小規模校の良さ", "小規模校の良さと課題"], ["望ましい学校規模", "望ましい学校規模の目安"], ["なぜ今", "なぜ今、検討するのか"],
+  ["施設の状況", "施設の状況"], ["長野市の計画", "長野市の計画"], ["若穂の学校で大切", "大切にしたい5つの視点"], ["考えられる選択肢", "選択肢A〜E"],
+  ["選択肢は同じ物差し", "同じ物差しでの比較"], ["義務教育学校と", "制度D・Eの違い"], ["学校と学校の距離", "学校と学校の距離と時間"],
+  ["若穂の地区と", "地区と子どもが住む場所"], ["家から学校まで", "家から学校までの道のり"], ["小中学校は、すべて", "避難所の指定"], ["どの選択肢でも、生活", "生活への影響"],
+  ["どの選択肢でも、すぐ", "すぐに始められる学び"], ["今後の進め方", "今後の進め方"], ["ご意見の出し方", "ご意見の出し方と扱い方"], ["今日のまとめ", "今日のまとめ"],
+  ["皆さんと一緒に", "一緒に考えたいこと"], ["綿内小｜", "学年ごとの見通し（3校）"], ["川田小｜", "学年ごとの見通し（3校）"], ["保科小｜", "学年ごとの見通し（3校）"],
+  ["地区ごとの、子ども", "地区別・各校までの道のり"], ["地区・町ごと", "地区・町ごとの人口"], ["用語の説明", "用語の説明と年の対応"]];
+const content = (title, subtitle) => { const s = pres.addSlide({ masterName: "CONTENT" }); TOC.push({ sec: SEC, title, n: pres.slides.length }); if (SEC) T(s, SEC, { x: 0.6, y: 0.2, w: 6, h: 0.3, fontSize: 14, bold: true, color: K.amber }); s.addText(title, { placeholder: "title" }); if (subtitle) sub(s, subtitle); return s; };
 
 
 const hills = (s) => {
@@ -56,6 +66,7 @@ const hills = (s) => {
 const divider = (n, name, desc) => {
   if (SHORT) return;
   const s = pres.addSlide({ masterName: "COVER" });
+  TOCSEC.push({ sec: n === "05" ? "参考資料" : `${n}  ${name}`, label: `${n}　${name}`, n: pres.slides.length });
   hills(s);
   T(s, n, { x: 0.9, y: 1.2, w: 3, h: 1.6, fontSize: 96, bold: true, color: K.amber });
   T(s, name, { x: 0.9, y: 2.95, w: 11, h: 1.0, fontSize: 48, bold: true, color: K.white });
@@ -118,6 +129,10 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
     T(s, "令和8年（2026年）［　］月［　］日　若穂地区小中学校再編検討委員会／長野市教育委員会事務局 学校教育課", { x: 0.9, y: 4.45, w: 11.5, h: 0.4, fontSize: 14, color: "CFE0D6" });
     s.addNotes("表紙。日付は事務局の確定後に記入。委員会名・事務局名の表記は要確認。");
   }
+
+  // 目次（通常版＝配布用のみ。投影用・短縮版には入れない）
+  const tocSlide = (!SHORT && APPENDIX) ? content("目次") : null;
+  if (tocSlide) TOC.pop();
 
   SEC = "はじめに";
   // 2 今日の流れ
@@ -617,6 +632,7 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
   if (!SHORT) {
     const s = pres.addSlide({ masterName: "DARK" });
     s.addText("皆さんと一緒に考えたいこと", { placeholder: "title" });
+    TOC.push({ sec: SEC, title: "皆さんと一緒に考えたいこと", n: pres.slides.length });
     const q = ["子どもたちに、どんな学びを経験してほしいですか？", "今の学校の良さで、残したいものは何ですか？", "通学・安全・地域活動で心配なことは何ですか？", "判断の前に、どんな情報が必要ですか？"];
     for (let i = 0; i < 4; i++) {
       const x = 0.6 + (i % 2) * 6.15, y = 1.65 + Math.floor(i / 2) * 1.75;
@@ -703,6 +719,41 @@ const share = (key, upto) => { const d = TG[key]; return Math.round(DBINS.slice(
       note(s, "年の表し方：令和の年に2018を足すと西暦になります（令和8年度＝2026年度、令和14年度＝2032年度、令和20年度＝2038年度）。", 6.4);
     }
   }
+  }
+
+  if (tocSlide) {
+    const s = tocSlide;
+    const nameOf = t => (TOCNAME.find(([k]) => t.startsWith(k)) || [t, t])[1];
+    // 区切りごとにまとめ、同じ名前が続くページは「32〜34」のように幅で示す
+    const secs = [{ label: "はじめに", sec: "はじめに", n: null }, ...TOCSEC];
+    const groups = secs.map(g => {
+      const items = [];
+      TOC.filter(e => e.sec === g.sec).forEach(e => {
+        const name = nameOf(e.title), last = items[items.length - 1];
+        if (last && last.name === name) last.to = e.n; else items.push({ name, n: e.n, to: e.n });
+      });
+      return { ...g, items };
+    });
+    const cols = [[0, 1, 2], [3], [4, 5]];
+    const RH = 0.37, CW = 3.92;
+    cols.forEach((gi, c) => {
+      const x = 0.6 + c * 4.09;
+      let y = 1.3;
+      gi.forEach(i => {
+        const g = groups[i];
+        box(s, x, y, CW, RH, K.tealL);
+        T(s, g.label, { x: x + 0.15, y, w: CW - 0.9, h: RH, fontSize: 17, bold: true, color: K.navy, valign: "middle" });
+        if (g.n) T(s, String(g.n), { x: x + CW - 0.75, y, w: 0.6, h: RH, fontSize: 16, color: K.sub, align: "right", valign: "middle" });
+        y += RH + 0.04;
+        g.items.forEach(it => {
+          T(s, it.name, { x: x + 0.3, y, w: CW - 1.15, h: RH, fontSize: 16, valign: "middle" });
+          T(s, it.to > it.n ? `${it.n}〜${it.to}` : String(it.n), { x: x + CW - (it.to > it.n ? 1.3 : 0.95), y, w: it.to > it.n ? 1.2 : 0.85, h: RH, fontSize: 16, bold: true, color: K.teal, align: "right", valign: "middle" });
+          y += RH;
+        });
+        y += 0.12;
+      });
+    });
+    note(s, "数字はページ番号です（各ページの右下にあります）。", 6.62);
   }
 
   await pres.writeFile({ fileName: OUT });
